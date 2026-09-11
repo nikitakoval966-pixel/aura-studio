@@ -1,13 +1,13 @@
 ---
-// src/pages/index.astro
+// src/pages/en/index.astro
 ---
 
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>AURA — Креативна Студія</title>
+<title>AURA — Creative Studio</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -182,7 +182,7 @@
   .nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 150;
     border-bottom: 1px solid var(--line);
-    isolation: isolate; /* Фикс для бага с рендерингом фильтров */
+    isolation: isolate; 
   }
   
   .nav::before {
@@ -329,13 +329,13 @@
     <div class="wrap">
       <a href="#top" class="brand">AURA</a>
       <nav class="links">
-        <a href="#works" class="hover-target">Проєкти</a>
-        <a href="#bento" class="hover-target">Переваги</a>
+        <a href="#works" class="hover-target">Projects</a>
+        <a href="#bento" class="hover-target">Benefits</a>
         <div class="controls">
-          <a href="/en" class="lang-btn hover-target" aria-label="English">EN</a>
+          <a href="/" class="lang-btn hover-target" aria-label="Ukrainian">UA</a>
           <button id="themeToggle" class="theme-btn hover-target" aria-label="Toggle theme">☀️</button>
         </div>
-        <a href="https://t.me/goblinmane" target="_blank" class="pill hover-target">Замовити</a>
+        <a href="https://t.me/goblinmane" target="_blank" class="pill hover-target">Order Now</a>
       </nav>
     </div>
   </header>
@@ -343,71 +343,71 @@
   <main id="top">
     <section class="hero">
       <div class="wrap">
-        <p class="eyebrow reveal-slow">AURA — креативна студія дизайну</p>
+        <p class="eyebrow reveal-slow">AURA — creative design studio</p>
         <h1 class="reveal-slow">
-          <span class="line"><span>Створюємо сайти,</span></span>
-          <span class="line"><span>що продають.</span></span>
+          <span class="line"><span>We craft websites,</span></span>
+          <span class="line"><span>that drive sales.</span></span>
         </h1>
-        <p class="sub reveal-slow">Сучасний дизайн, плавні анімації та преміальна якість. Ми робимо так, щоб ваш бізнес виглядав дорого.</p>
+        <p class="sub reveal-slow">Modern design, smooth animations, and premium quality. We make your business look expensive.</p>
       </div>
     </section>
 
     <div class="marquee reveal-slow">
       <div class="track">
         <div class="content">
-          <span>Київ</span><div class="dot"></div>
-          <span>Львів</span><div class="dot"></div>
-          <span>Одеса</span><div class="dot"></div>
-          <span>Дніпро</span><div class="dot"></div>
-          <span>Харків</span><div class="dot"></div>
-          <span>Вінниця</span><div class="dot"></div>
-          <span>Запоріжжя</span><div class="dot"></div>
-          <span>Івано-Франківськ</span><div class="dot"></div>
-          <span>Чернівці</span><div class="dot"></div>
-          <span>Ужгород</span><div class="dot"></div>
-          <span>Тернопіль</span><div class="dot"></div>
-          <span>Луцьк</span><div class="dot"></div>
+          <span>Kyiv</span><div class="dot"></div>
+          <span>Lviv</span><div class="dot"></div>
+          <span>Odesa</span><div class="dot"></div>
+          <span>Dnipro</span><div class="dot"></div>
+          <span>Kharkiv</span><div class="dot"></div>
+          <span>Vinnytsia</span><div class="dot"></div>
+          <span>Zaporizhzhia</span><div class="dot"></div>
+          <span>Ivano-Frankivsk</span><div class="dot"></div>
+          <span>Chernivtsi</span><div class="dot"></div>
+          <span>Uzhhorod</span><div class="dot"></div>
+          <span>Ternopil</span><div class="dot"></div>
+          <span>Lutsk</span><div class="dot"></div>
         </div>
         <div class="content" aria-hidden="true">
-          <span>Київ</span><div class="dot"></div>
-          <span>Львів</span><div class="dot"></div>
-          <span>Одеса</span><div class="dot"></div>
-          <span>Дніпро</span><div class="dot"></div>
-          <span>Харків</span><div class="dot"></div>
-          <span>Вінниця</span><div class="dot"></div>
-          <span>Запоріжжя</span><div class="dot"></div>
-          <span>Івано-Франківськ</span><div class="dot"></div>
-          <span>Чернівці</span><div class="dot"></div>
-          <span>Ужгород</span><div class="dot"></div>
-          <span>Тернопіль</span><div class="dot"></div>
-          <span>Луцьк</span><div class="dot"></div>
+          <span>Kyiv</span><div class="dot"></div>
+          <span>Lviv</span><div class="dot"></div>
+          <span>Odesa</span><div class="dot"></div>
+          <span>Dnipro</span><div class="dot"></div>
+          <span>Kharkiv</span><div class="dot"></div>
+          <span>Vinnytsia</span><div class="dot"></div>
+          <span>Zaporizhzhia</span><div class="dot"></div>
+          <span>Ivano-Frankivsk</span><div class="dot"></div>
+          <span>Chernivtsi</span><div class="dot"></div>
+          <span>Uzhhorod</span><div class="dot"></div>
+          <span>Ternopil</span><div class="dot"></div>
+          <span>Lutsk</span><div class="dot"></div>
         </div>
       </div>
     </div>
 
     <section class="manifesto">
       <div class="wrap">
-        <div class="tag reveal-slow">Наш підхід</div>
-        <p class="quote reveal-slow" id="quote">Люди не читають сайти, вони їх відчувають. Ми робимо це відчуття преміальним.</p>
-        <p class="desc reveal-slow">Забудьте про шаблонні конструктори. Ваш сайт — це обличчя бренду. Він має завантажуватись миттєво, виглядати ідеально на смартфоні та закохувати в себе з першої секунди.</p>
+        <div class="tag reveal-slow">Our Approach</div>
+        <p class="quote reveal-slow" id="quote">People don't read websites, they feel them. We make that feeling premium.</p>
+        <p class="desc reveal-slow">Forget template builders. Your website is the face of your brand. It must load instantly, look perfect on a smartphone, and make them fall in love from the first second.</p>
       </div>
     </section>
 
     <section class="bento" id="bento">
       <div class="wrap">
-        <div class="head reveal-slow"><h2>Чому обирають нас?</h2></div>
+        <div class="head reveal-slow"><h2>Why choose us?</h2></div>
         <div class="bento-grid">
           <div class="bento-card hover-target reveal-slow">
             <svg viewBox="0 0 24 24"><path d="M13.13 22.19L11.5 18.36C11.33 17.97 11.03 17.67 10.64 17.5L6.81 15.87C4.64 14.95 4.8 11.87 7.04 11.23L18.06 8.08C19.79 7.59 21.41 9.21 20.92 10.94L17.77 21.96C17.13 24.2 14.05 24.36 13.13 22.19Z" opacity="0.3"/><path d="M12.9803 11.0202L15.3403 8.66016" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <h3>Швидкість</h3><p>Наші сайти працюють на сучасних фреймворках, тому вони завантажуються за мілісекунди.</p>
+            <h3>Speed</h3><p>Our websites run on modern frameworks, meaning they load in milliseconds.</p>
           </div>
           <div class="bento-card hover-target reveal-slow">
             <svg viewBox="0 0 24 24"><path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" opacity="0.3"/><path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <h3>Apple-стиль</h3><p>Мінімалізм, увага до деталей, плавні анімації. Ми переносимо естетику топових брендів у ваш проєкт.</p>
+            <h3>Apple-Style</h3><p>Minimalism, attention to detail, smooth animations. We bring top-tier brand aesthetics to your project.</p>
           </div>
           <div class="bento-card hover-target reveal-slow">
             <svg viewBox="0 0 24 24"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" opacity="0.3"/><path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <h3>Без абонплат</h3><p>Ви платите один раз. Жодних щомісячних платежів конструкторам на кшталт Tilda чи Wix.</p>
+            <h3>No Subscriptions</h3><p>You pay once. No monthly fees to website builders like Tilda or Wix.</p>
           </div>
         </div>
       </div>
@@ -416,18 +416,18 @@
     <section class="works" id="works">
       <div class="wrap">
         <div class="head reveal-slow">
-          <h2>Вибрані проєкти</h2><p>Кейси, якими ми пишаємося. Від локальних кав'ярень до великих ресторанів.</p>
+          <h2>Featured Projects</h2><p>Cases we are proud of. From local coffee shops to large restaurants.</p>
         </div>
         <div class="work-list">
           <div class="work reveal-slow">
-            <div class="meta"><span class="no">01</span><h3>Ресторан "Едем"</h3><span class="loc">Сайт-меню, Київ</span></div>
-            <div class="visual hover-visual" data-cursor=""><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop" alt="Ресторан"></div>
-            <div class="specs"><div><b>Платформа</b>Astro + Tailwind</div><div><b>Конверсія</b>+45% замовлень</div></div>
+            <div class="meta"><span class="no">01</span><h3>"Edem" Restaurant</h3><span class="loc">Menu Website, Kyiv</span></div>
+            <div class="visual hover-visual" data-cursor=""><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop" alt="Restaurant"></div>
+            <div class="specs"><div><b>Platform</b>Astro + Tailwind</div><div><b>Conversion</b>+45% orders</div></div>
           </div>
           <div class="work reveal-slow">
-            <div class="meta"><span class="no">02</span><h3>Кав'ярня "Зерно"</h3><span class="loc">Лендінг, Вінниця</span></div>
-            <div class="visual hover-visual" data-cursor=""><img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1200&auto=format&fit=crop" alt="Кав'ярня"></div>
-            <div class="specs"><div><b>Платформа</b>Власний код</div><div><b>Особливість</b>QR-меню на столи</div></div>
+            <div class="meta"><span class="no">02</span><h3>"Zerno" Coffee Shop</h3><span class="loc">Landing Page, Vinnytsia</span></div>
+            <div class="visual hover-visual" data-cursor=""><img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1200&auto=format&fit=crop" alt="Coffee Shop"></div>
+            <div class="specs"><div><b>Platform</b>Custom Code</div><div><b>Feature</b>Table QR-menu</div></div>
           </div>
         </div>
       </div>
@@ -435,9 +435,9 @@
 
     <section class="cta" id="contact">
       <div class="wrap">
-        <p class="label reveal-slow">Потрібен стильний сайт?</p>
-        <div class="reveal-slow"><a href="https://t.me/goblinmane" target="_blank" class="email hover-target">Написати в Telegram</a></div>
-        <div class="details reveal-slow"><div><b>Локація</b>Вінниця (Працюємо онлайн)</div><div><b>Вартість</b>Від $30 за проєкт</div></div>
+        <p class="label reveal-slow">Need a stylish website?</p>
+        <div class="reveal-slow"><a href="https://t.me/goblinmane" target="_blank" class="email hover-target">Message on Telegram</a></div>
+        <div class="details reveal-slow"><div><b>Location</b>Vinnytsia (Working worldwide)</div><div><b>Pricing</b>From $30 per project</div></div>
       </div>
     </section>
   </main>
@@ -445,7 +445,7 @@
   <footer>
     <div class="wrap">
       <span>&copy; <span id="year"></span> AURA Studio</span>
-      <div class="socials"><a href="#" class="hover-target">Instagram</a><a href="#top" class="hover-target">Вгору ↑</a></div>
+      <div class="socials"><a href="#" class="hover-target">Instagram</a><a href="#top" class="hover-target">Top ↑</a></div>
     </div>
   </footer>
 </div> <!-- /siteContainer -->
