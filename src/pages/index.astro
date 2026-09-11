@@ -1,17 +1,583 @@
 ---
-
+// src/pages/index.astro
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>AURA — Креативна Студія</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style is:global>
+  /* ============ TOKENS ============ */
+  :root {
+    --bg:        #F5F5F7; 
+    --bg-panel:  #FFFFFF; 
+    --paper:     #1D1D1F; 
+    --muted:     #86868B; 
+    --accent:    #0071E3; 
+    --line:      #E5E5EA; 
+    --sans:      'Inter', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @media (hover: hover) and (pointer: fine) {
+    *, a, button, .pill, .visual { cursor: none !important; }
+  }
+
+  /* ЖОРСТКА ФІКСАЦІЯ ШИРИНИ */
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    background: var(--bg);
+    scroll-behavior: auto;
+  }
+
+  body {
+    color: var(--paper);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  a { color: inherit; text-decoration: none; display: inline-block; }
+  img { display: block; max-width: 100%; object-fit: cover; pointer-events: none; }
+  h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.03em; }
+
+  /* БЕЗПЕЧНИЙ КОНТЕЙНЕР */
+  .wrap { 
+    width: 100%; 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 0 20px; 
+  }
+  @media (min-width: 768px) {
+    .wrap { padding: 0 40px; }
+  }
+
+  /* ============ AMBIENT GLOW ============ */
+  @keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(40px, -60px) scale(1.1); }
+    66% { transform: translate(-30px, 30px) scale(0.9); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+
+  .glow-circle {
+    position: absolute; width: 60vw; height: 60vw; max-width: 600px; max-height: 600px;
+    background: radial-gradient(circle, rgba(0,113,227,0.06) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%; filter: blur(60px); z-index: -1; pointer-events: none;
+    animation: float 20s ease-in-out infinite;
+  }
+  .glow-1 { top: -5%; left: -10%; }
+  .glow-2 { top: 40%; right: -20%; background: radial-gradient(circle, rgba(134,134,139,0.08) 0%, rgba(255,255,255,0) 70%); animation-delay: -10s; animation-duration: 25s; }
+
+  /* ============ CUSTOM CURSOR ============ */
+  .cursor{
+    position:fixed; top:0; left:0; z-index:300;
+    width:14px; height:14px; border-radius:50%;
+    background:var(--paper); pointer-events:none; transform:translate(-50%,-50%);
+    transition: width .3s cubic-bezier(0.16, 1, 0.3, 1), height .3s cubic-bezier(0.16, 1, 0.3, 1), background .3s ease;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  /* Збільшили курсор, щоб слово "ДИВИТИСЬ" ідеально влазило */
+  .cursor.grow{ width: 76px; height: 76px; background: rgba(29, 29, 31, 0.9); backdrop-filter: blur(4px); }
+  .cursor .label{
+    font-family:var(--sans); 
+    font-size: 0.55rem; 
+    font-weight: 700; color:#fff;
+    opacity:0; transition:opacity .2s ease; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .cursor.grow .label{ opacity:1; }
+  @media (pointer:coarse){ .cursor{ display:none; } }
+
+  /* ============ PRELOADER ============ */
+  .preloader{
+    position:fixed; inset:0; z-index:500; background:var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.5rem;
+  }
+  .preloader .bars{ display:flex; align-items:flex-end; gap:4px; height:40px; }
+  .preloader .bars span{ width:4px; background:var(--paper); height:6px; border-radius:4px; }
+  .preloader .count{ font-size:0.85rem; font-weight:600; color:var(--muted); letter-spacing:0.05em; }
+  .preloader.done{ opacity:0; visibility:hidden; transition:opacity .6s ease, visibility 0s .6s; }
+
+  /* ============ NAV ============ */
+  .nav{
+    position:fixed; top:0; left:0; right:0; z-index:150;
+    background: rgba(245, 245, 247, 0.75);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .nav .wrap{ display:flex; align-items:center; justify-content:space-between; height: 60px; }
+  .nav .brand{ font-size:1.1rem; font-weight:800; letter-spacing: -0.02em; flex-shrink: 0;}
+  .nav .links{ display:flex; align-items: center; justify-content: flex-end; gap: 2rem; font-size:0.85rem; font-weight:600; color:var(--muted); }
+  .nav .links a:hover{ color:var(--paper); transition: color 0.2s ease;}
+  .nav .links a.pill{
+    background:var(--paper); color:#fff; border-radius:999px;
+    padding:0.35rem 1rem; 
+    transition: transform 0.2s ease;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .nav .links a.pill:hover{ transform: scale(1.05); color: #fff; }
+  @media (max-width:860px){ .nav .links a:not(.pill){ display:none; } }
+
+  /* ============ HERO ============ */
+  .hero{
+    min-height: 70svh; display:flex; flex-direction:column; justify-content:center;
+    padding-top: 8rem; position:relative;
+  }
+  .hero .eyebrow{
+    font-size:0.95rem; font-weight:600; color:var(--muted); margin-bottom:1.5rem;
+  }
+  .hero h1{
+    font-size: clamp(2.2rem, 9vw, 7.5rem); 
+    line-height: 1.05; font-weight: 800; letter-spacing: -0.04em;
+  }
+  .hero h1 .line{ overflow:hidden; display:block; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+  .hero h1 .line span{ display:inline-block; transform:translateY(110%); }
+  
+  .hero .sub{
+    margin-top:2rem; max-width:48ch; font-size: clamp(1rem, 2vw, 1.1rem); font-weight:500; color:var(--muted);
+    opacity:0; transform:translateY(16px);
+  }
+
+  /* ============ MARQUEE ============ */
+  .marquee {
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    padding: clamp(1rem, 3vw, 1.5rem) 0; overflow: hidden; background: var(--bg-panel);
+    margin-top: clamp(3rem, 8vw, 6rem); width: 100%;
+  }
+  .marquee .track {
+    display: flex; width: max-content; animation: scroll 40s linear infinite;
+  }
+  .marquee .content {
+    display: flex; align-items: center; flex-wrap: nowrap;
+    gap: clamp(2rem, 5vw, 4rem); padding-right: clamp(2rem, 5vw, 4rem);
+    font-size: clamp(1.1rem, 3vw, 1.3rem); font-weight: 700; color: var(--paper);
+  }
+  .marquee .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+  @keyframes scroll { to { transform: translateX(-50%); } }
+
+  /* ============ MANIFESTO ============ */
+  .manifesto { padding: clamp(5rem, 10vw, 10rem) 0; text-align: center; position: relative; }
+  .manifesto .tag {
+    display: inline-block; padding: 0.4rem 1.2rem; border-radius: 999px;
+    background: rgba(0,0,0,0.05); color: var(--muted);
+    font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 2.5rem;
+  }
+  .manifesto p.quote {
+    font-size: clamp(1.8rem, 4vw, 3.5rem); line-height: 1.2; font-weight: 700; letter-spacing: -0.03em;
+    max-width: 24ch; margin: 0 auto;
+  }
+  .manifesto p.quote .word { opacity: 0.2; transition: opacity .15s ease-out; }
+  .manifesto p.quote .word.lit { opacity: 1; }
+  .manifesto .desc {
+    margin: 2rem auto 0; max-width: 52ch; color: var(--muted); 
+    font-size: clamp(1rem, 2vw, 1.1rem); font-weight: 500;
+  }
+
+  /* ============ BENTO GRID ============ */
+  .bento { padding: clamp(4rem, 8vw, 6rem) 0; }
+  .bento .head { text-align: center; margin-bottom: clamp(2.5rem, 6vw, 4rem); }
+  .bento .head h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); margin-bottom: 0.5rem; }
+  
+  .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .bento-card {
+    background: var(--bg-panel); border-radius: 32px; 
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02);
+    display: flex; flex-direction: column; justify-content: flex-start;
+    /* АНІМАЦІЯ ВСТАВАННЯ (Як у фотографій) */
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+  }
+  .bento-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 24px 48px rgba(0, 113, 227, 0.12);
+    border-color: rgba(0, 113, 227, 0.2);
+  }
+  .bento-card svg { width: 40px; height: 40px; margin-bottom: 1.5rem; fill: var(--accent); transition: transform 0.3s ease; }
+  .bento-card:hover svg { transform: scale(1.1); }
+  .bento-card h3 { font-size: 1.3rem; margin-bottom: 0.8rem; }
+  .bento-card p { color: var(--muted); font-size: 0.95rem; font-weight: 500; }
+  
+  @media (max-width: 900px) { .bento-grid { grid-template-columns: 1fr; } }
+
+  /* ============ WORKS ============ */
+  .works{ padding:clamp(4rem,10vw,10rem) 0; }
+  .works .head { 
+    display: flex; flex-direction: column; align-items: center; justify-content: center; 
+    text-align: center; margin-bottom: clamp(3rem, 6vw, 5rem); gap: 1rem; 
+  }
+  .works .head h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+  .works .head p { max-width: 40ch; color: var(--muted); font-size: 1rem; font-weight: 500; margin: 0 auto; }
+  
+  .work {
+    display: grid; grid-template-columns: 0.8fr 1.5fr 0.8fr; gap: clamp(1rem, 3vw, 3rem);
+    align-items: center; 
+    padding: clamp(2.5rem, 6vw, 4rem) 0; 
+    border-bottom: 1px solid var(--line);
+  }
+  .work:first-child { border-top: 1px solid var(--line); }
+
+  .work .meta{ display:flex; flex-direction:column; gap:0.5rem; }
+  .work .meta .no{ font-size:0.85rem; font-weight:700; color:var(--muted); }
+  .work .meta h3{ font-size:clamp(1.5rem,3vw,2.4rem); }
+  .work .meta .loc{ color:var(--muted); font-size:0.95rem; font-weight:600;}
+  
+  .work .visual {
+    aspect-ratio:16/10; border-radius:24px; overflow:hidden; background:var(--bg-panel);
+    position:relative; box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .work .visual:hover {
+    transform: translateY(-12px) scale(1.02); 
+    box-shadow: 0 24px 48px rgba(0,0,0,0.12);
+  }
+  
+  .work .visual img {
+    width: 100%; height: 120%; object-fit: cover; transform: translateY(-10%);
+  }
+
+  .work .specs{ font-size:0.85rem; font-weight:500; color:var(--muted); line-height:2; justify-self:end; text-align:right;}
+  .work .specs b{ color:var(--paper); display:block; font-size:0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-top:0.5rem;}
+  
+  @media (max-width:900px){
+    .work { grid-template-columns:1fr; padding: 2.5rem 0; }
+    .work .specs { justify-self:start; text-align:left; display: flex; gap: 2rem; flex-wrap: wrap;}
+    .work .specs b { margin-top: 0; }
+  }
+
+  /* ============ CTA ============ */
+  .cta{ padding:clamp(5rem,12vw,9rem) 0; text-align:left; background:var(--bg-panel); border-radius: 40px 40px 0 0;}
+  .cta .label{ color:var(--muted); font-size:1rem; font-weight:700; margin-bottom:1.2rem; text-transform:uppercase; letter-spacing:0.05em;}
+  .cta a.email{
+    font-weight:800; letter-spacing: -0.04em;
+    font-size:clamp(1.5rem, 8vw, 4rem); word-break:break-word;
+    display:inline-block; position:relative; color: var(--paper);
+  }
+  .cta a.email::after{
+    content:''; position:absolute; left:0; bottom:0.1em; width:100%; height:4px;
+    background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform .4s ease;
+  }
+  .cta a.email:hover::after{ transform:scaleX(1); }
+  .cta .details{ margin-top:clamp(2.5rem, 6vw, 3.5rem); display:flex; gap: clamp(2rem, 5vw, 4rem); color:var(--muted); font-size:0.95rem; font-weight:500; flex-wrap:wrap; }
+  .cta .details b{ color:var(--paper); display:block; font-weight:700; margin-bottom:0.4rem; text-transform:uppercase; font-size:0.8rem; letter-spacing:0.05em;}
+
+  /* ============ FOOTER ============ */
+  footer{ 
+    border-top: 1px solid var(--line); 
+    padding-top: 2.5rem;
+    padding-bottom: calc(2.5rem + env(safe-area-inset-bottom)); 
+    background: var(--bg-panel); 
+  }
+  footer .wrap{ display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; font-weight:600; color:var(--muted); flex-wrap:wrap; gap:1.5rem; }
+  footer .socials{ display:flex; gap:1.5rem; }
+  footer .socials a:hover{ color:var(--paper); }
+
+  /* Класи для анімації появи */
+  .reveal-slow { visibility: hidden; }
+
+</style>
+</head>
+<body>
+
+<div class="glow-circle glow-1"></div>
+<div class="glow-circle glow-2"></div>
+
+<div class="cursor" id="cursor"><span class="label" id="cursorLabel"></span></div>
+
+<div class="preloader" id="preloader">
+  <div class="bars" id="bars"></div>
+  <div class="count" id="count">0%</div>
+</div>
+
+<header class="nav">
+  <div class="wrap">
+    <a href="#top" class="brand">AURA</a>
+    <nav class="links">
+      <a href="#works">Проєкти</a>
+      <a href="#bento">Переваги</a>
+      <a href="#contact" class="pill">Замовити</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow reveal-slow">AURA — креативна студія дизайну</p>
+      
+      <h1 class="reveal-slow">
+        <span class="line"><span>Створюємо сайти,</span></span>
+        <span class="line"><span>що продають.</span></span>
+      </h1>
+      
+      <p class="sub reveal-slow">Сучасний дизайн, плавні анімації та преміальна якість. Ми робимо так, щоб ваш бізнес виглядав дорого.</p>
+    </div>
+  </section>
+
+  <div class="marquee reveal-slow">
+    <div class="track">
+      <div class="content">
+        <span>Київ</span><div class="dot"></div>
+        <span>Львів</span><div class="dot"></div>
+        <span>Одеса</span><div class="dot"></div>
+        <span>Дніпро</span><div class="dot"></div>
+        <span>Харків</span><div class="dot"></div>
+        <span>Вінниця</span><div class="dot"></div>
+        <span>Запоріжжя</span><div class="dot"></div>
+        <span>Івано-Франківськ</span><div class="dot"></div>
+        <span>Чернівці</span><div class="dot"></div>
+        <span>Ужгород</span><div class="dot"></div>
+        <span>Тернопіль</span><div class="dot"></div>
+        <span>Луцьк</span><div class="dot"></div>
+      </div>
+      <div class="content" aria-hidden="true">
+        <span>Київ</span><div class="dot"></div>
+        <span>Львів</span><div class="dot"></div>
+        <span>Одеса</span><div class="dot"></div>
+        <span>Дніпро</span><div class="dot"></div>
+        <span>Харків</span><div class="dot"></div>
+        <span>Вінниця</span><div class="dot"></div>
+        <span>Запоріжжя</span><div class="dot"></div>
+        <span>Івано-Франківськ</span><div class="dot"></div>
+        <span>Чернівці</span><div class="dot"></div>
+        <span>Ужгород</span><div class="dot"></div>
+        <span>Тернопіль</span><div class="dot"></div>
+        <span>Луцьк</span><div class="dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="manifesto">
+    <div class="wrap">
+      <div class="tag reveal-slow">Наш підхід</div>
+      <p class="quote reveal-slow" id="quote">Люди не читають сайти, вони їх відчувають. Ми робимо це відчуття преміальним.</p>
+      <p class="desc reveal-slow">Забудьте про шаблонні конструктори. Ваш сайт — це обличчя бренду. Він має завантажуватись миттєво, виглядати ідеально на смартфоні та закохувати в себе з першої секунди.</p>
+    </div>
+  </section>
+
+  <section class="bento" id="bento">
+    <div class="wrap">
+      <div class="head reveal-slow">
+        <h2>Чому обирають нас?</h2>
+      </div>
+      <div class="bento-grid">
+        <div class="bento-card reveal-slow">
+          <svg viewBox="0 0 24 24"><path d="M13.13 22.19L11.5 18.36C11.33 17.97 11.03 17.67 10.64 17.5L6.81 15.87C4.64 14.95 4.8 11.87 7.04 11.23L18.06 8.08C19.79 7.59 21.41 9.21 20.92 10.94L17.77 21.96C17.13 24.2 14.05 24.36 13.13 22.19Z" opacity="0.3"/><path d="M12.9803 11.0202L15.3403 8.66016" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Швидкість</h3>
+          <p>Наші сайти працюють на сучасних фреймворках, тому вони завантажуються за мілісекунди.</p>
+        </div>
+        <div class="bento-card reveal-slow">
+          <svg viewBox="0 0 24 24"><path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" opacity="0.3"/><path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Apple-стиль</h3>
+          <p>Мінімалізм, увага до деталей, плавні анімації. Ми переносимо естетику топових брендів у ваш проєкт.</p>
+        </div>
+        <div class="bento-card reveal-slow">
+          <svg viewBox="0 0 24 24"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" opacity="0.3"/><path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Без абонплат</h3>
+          <p>Ви платите один раз. Жодних щомісячних платежів конструкторам на кшталт Tilda чи Wix.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="works" id="works">
+    <div class="wrap">
+      <div class="head reveal-slow">
+        <h2>Вибрані проєкти</h2>
+        <p>Кейси, якими ми пишаємося. Від локальних кав'ярень до великих ресторанів.</p>
+      </div>
+      
+      <div class="work-list">
+        <div class="work reveal-slow">
+          <div class="meta">
+            <span class="no">01</span>
+            <h3>Ресторан "Едем"</h3>
+            <span class="loc">Сайт-меню, Київ</span>
+          </div>
+          <div class="visual" data-cursor="Дивитись">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop" alt="Ресторан">
+          </div>
+          <div class="specs">
+            <div><b>Платформа</b>Astro + Tailwind</div>
+            <div><b>Конверсія</b>+45% замовлень</div>
+          </div>
+        </div>
+
+        <div class="work reveal-slow">
+          <div class="meta">
+            <span class="no">02</span>
+            <h3>Кав'ярня "Зерно"</h3>
+            <span class="loc">Лендінг, Вінниця</span>
+          </div>
+          <div class="visual" data-cursor="Дивитись">
+            <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1200&auto=format&fit=crop" alt="Кав'ярня">
+          </div>
+          <div class="specs">
+            <div><b>Платформа</b>Власний код</div>
+            <div><b>Особливість</b>QR-меню на столи</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="contact">
+    <div class="wrap">
+      <p class="label reveal-slow">Потрібен стильний сайт?</p>
+      <div class="reveal-slow">
+        <a href="https://t.me/" target="_blank" class="email" data-cursor="Go">Написати в Telegram</a>
+      </div>
+      <div class="details reveal-slow">
+        <div><b>Локація</b>Вінниця (Працюємо онлайн)</div>
+        <div><b>Вартість</b>Від $30 за проєкт</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>&copy; <span id="year"></span> AURA Studio</span>
+    <div class="socials">
+      <a href="#">Instagram</a>
+      <a href="#top">Вгору ↑</a>
+    </div>
+  </div>
+</footer>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+
+<script is:inline>
+(function(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(typeof gsap !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* PRELOADER */
+  const bars = document.getElementById('bars');
+  for(let i=0;i<24;i++){
+    const b = document.createElement('span');
+    bars.appendChild(b);
+  }
+  const barEls = bars.querySelectorAll('span');
+  const countEl = document.getElementById('count');
+  const preloader = document.getElementById('preloader');
+
+  let pct = 0;
+  const barInterval = setInterval(()=>{
+    barEls.forEach(b=> b.style.height = (6 + Math.random()*34) + 'px');
+  }, 90);
+
+  const loadTimer = setInterval(()=>{
+    pct += Math.ceil(Math.random()*12)+4;
+    if(pct >= 100){
+      pct = 100;
+      countEl.textContent = '100%';
+      clearInterval(loadTimer);
+      clearInterval(barInterval);
+      setTimeout(()=>{
+        preloader.classList.add('done');
+        runHeroEntrance();
+      }, 300);
+      return;
+    }
+    countEl.textContent = pct + '%';
+  }, 120);
+
+  /* HERO ANIMATION */
+  function runHeroEntrance(){
+    if(reduceMotion) return;
+    const tl = gsap.timeline({ defaults:{ ease:'power3.out' } });
+    tl.to('.hero h1 .line span', { y:'0%', duration: 1.2, stagger: 0.1 })
+      .to('.hero .sub', { opacity: 1, y: 0, duration: 1 }, '-=0.8');
+  }
+
+  /* APPLE-STYLE SCROLL REVEAL */
+  if(!reduceMotion){
+    gsap.utils.toArray('.reveal-slow').forEach(function(elem) {
+      gsap.set(elem, { autoAlpha: 0, y: 30 });
+      gsap.to(elem, {
+        scrollTrigger: {
+          trigger: elem,
+          start: "top 85%",
+          once: true 
+        },
+        autoAlpha: 1,
+        y: 0,
+        duration: 1.5, 
+        ease: "power2.out"
+      });
+    });
+  }
+
+  /* CUSTOM CURSOR */
+  const cursor = document.getElementById('cursor');
+  const cursorLabel = document.getElementById('cursorLabel');
+  let mx=0,my=0,cx=0,cy=0;
+  window.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; });
+  (function loop(){
+    cx += (mx-cx)*0.2; cy += (my-cy)*0.2;
+    cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%,-50%)`;
+    requestAnimationFrame(loop);
+  })();
+
+  document.querySelectorAll('.visual, .cta a.email, .nav a, footer a, .bento-card').forEach(el=>{
+    el.addEventListener('mouseenter', ()=>{
+      cursor.classList.add('grow');
+      cursorLabel.textContent = el.dataset.cursor || '';
+    });
+    el.addEventListener('mouseleave', ()=>{
+      cursor.classList.remove('grow');
+      cursorLabel.textContent = '';
+    });
+  });
+
+  /* IMAGE PARALLAX */
+  if(!reduceMotion){
+    gsap.utils.toArray('.visual img').forEach(img => {
+      gsap.to(img, {
+        yPercent: 20, 
+        ease: "none",
+        scrollTrigger: {
+          trigger: img.parentElement,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      });
+    });
+  }
+
+  /* SMOOTH SCROLL */
+  if (typeof Lenis !== 'undefined' && !reduceMotion) {
+    const lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+    function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    ScrollTrigger.update();
+    gsap.ticker.add((time)=> lenis.raf(time*1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+
+})();
+</script>
+
+</body>
 </html>
