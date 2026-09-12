@@ -1,5 +1,5 @@
 ---
-// src/pages/en/index.astro
+// src/pages/en.astro
 ---
 
 <!DOCTYPE html>
@@ -43,7 +43,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   @media (hover: hover) and (pointer: fine) {
-    *, a, button, .pill, .theme-btn, .bento-card, .step-card, .hero-widget, .scroll-indicator { cursor: none !important; }
+    *, a, button, .pill, .theme-btn, .bento-card, .step-card, .hero-widget { cursor: none !important; }
   }
 
   body, .bento-card, .nav::before, footer, .marquee, .cta, .step-card {
@@ -70,7 +70,7 @@
   .wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
   @media (min-width: 768px) { .wrap { padding: 0 40px; } }
 
-  /* ============ THEME WIPE (INK FILL) ============ */
+  /* ============ THEME TRANSITION ANIMATION ============ */
   html::view-transition-old(root),
   html::view-transition-new(root) {
     animation-duration: 0.8s;
@@ -257,8 +257,8 @@
     -webkit-backdrop-filter: blur(40px) saturate(200%);
     border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 32px;
-    padding: 2.5rem 2rem;
-    min-width: 380px;
+    padding: 2rem;
+    min-width: 360px;
     box-shadow: 0 30px 60px rgba(0, 113, 227, 0.1), inset 0 1px 0 rgba(255,255,255,0.8);
     opacity: 0; transform: translateY(30px) scale(0.95);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
@@ -277,7 +277,7 @@
 
   .widget-row { 
     display: flex; align-items: center; justify-content: space-between; 
-    gap: 1.5rem; padding: 1.2rem 0; border-bottom: 1px solid var(--line); 
+    gap: 1.5rem; padding: 1rem 0; border-bottom: 1px solid var(--line); 
     font-size: 0.95rem; font-weight: 600;
   }
   .widget-row:last-child { border-bottom: none; padding-bottom: 0; }
@@ -290,12 +290,6 @@
   .widget-label { color: var(--paper); white-space: nowrap; flex-shrink: 0; }
   .widget-value { color: var(--muted); white-space: nowrap; text-align: right; }
   .time-value { background: var(--paper); color: var(--bg-panel); padding: 0.2rem 0.6rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700; }
-
-  @media (max-width: 800px) {
-    .hero-widget { min-width: 100%; width: 100%; padding: 1.5rem; }
-    .widget-row { gap: 1rem; padding: 1rem 0; font-size: 0.85rem; }
-    .hero-wrap { gap: 2rem; }
-  }
 
   /* ============ MARQUEE ============ */
   .marquee { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: clamp(1rem, 3vw, 1.5rem) 0; overflow: hidden; background: var(--bg-panel); margin-top: clamp(3rem, 8vw, 6rem); width: 100%; }
@@ -357,14 +351,7 @@
   .process-info h2 { font-size: clamp(2.2rem, 4vw, 3.6rem); margin-bottom: 1rem; line-height: 1.1; }
   .process-info p { color: var(--muted); font-size: 1rem; font-weight: 500; max-width: 30ch; }
   
-  .core-wrapper { perspective: 1000px; margin-top: 3rem; display: flex; align-items: center; } 
-  
-  @media (max-width: 900px) { 
-    .process-info { text-align: center; display: flex; flex-direction: column; align-items: center; }
-    .process-info p { text-align: center; }
-    .core-wrapper { margin-top: 2rem; justify-content: center; width: 100%; }
-  }
-
+  .core-wrapper { perspective: 1000px; margin-top: 3rem; display: inline-block; }
   .aura-core {
     width: 100px; height: 100px; position: relative; transform-style: preserve-3d;
     animation: spinCore 15s linear infinite;
@@ -407,7 +394,7 @@
 
   .reveal-slow { visibility: hidden; }
 
-  /* ============ BUTTON "BACK TO TOP" (INDICATOR) ============ */
+  /* ============ BACK TO TOP BUTTON ============ */
   .back-to-top {
     position: fixed;
     right: clamp(16px, 4vw, 32px);
@@ -462,18 +449,11 @@
 </head>
 <body id="top">
 
-<!-- Physical wipe for theme transition -->
-<div id="themeWipe" class="theme-wipe"></div>
-
-<!-- Canvas for neon trail -->
-<canvas id="trailCanvas"></canvas>
-
 <div class="preloader" id="preloader">
   <div class="loader-brand" id="loaderBrand">This Is Aura.</div>
   <div class="loader-count" id="loaderCount">000%</div>
 </div>
 
-<!-- Global grid layer -->
 <div class="global-grid" id="globalGrid"></div>
 
 <div id="siteContainer" style="opacity: 0; transform: scale(1.05);">
@@ -485,12 +465,12 @@
       <a href="#top" class="brand hover-target">AURA</a>
       <nav class="links">
         <a href="#process" class="hover-target">Process</a>
-        <a href="#bento" class="hover-target">Benefits</a>
+        <a href="#bento" class="hover-target">Features</a>
         <div class="controls">
           <a href="/" class="lang-btn hover-target" aria-label="Ukrainian">UA</a>
           <button id="themeToggle" class="theme-btn hover-target" aria-label="Toggle theme">☀️</button>
         </div>
-        <a href="https://t.me/goblinmane" target="_blank" class="pill hover-target">Start Project</a>
+        <a href="https://t.me/goblinmane" target="_blank" class="pill hover-target">Get a Quote</a>
       </nav>
     </div>
   </header>
@@ -567,8 +547,8 @@
     <section class="manifesto">
       <div class="wrap">
         <div class="tag reveal-slow">Our approach</div>
-        <p class="quote reveal-slow" id="quote">People don't just read websites, they feel them. We make this feeling premium.</p>
-        <p class="desc reveal-slow">Forget about generic website builders. Your website is the face of your brand. It must load instantly, look perfect on a smartphone, and make people fall in love at first sight.</p>
+        <p class="quote reveal-slow" id="quote">People don't read websites, they feel them. We make that feeling premium.</p>
+        <p class="desc reveal-slow">Forget template builders. Your website is the face of your brand. It should load instantly, look perfect on mobile, and win people over from the very first second.</p>
       </div>
     </section>
 
@@ -578,15 +558,15 @@
         <div class="bento-grid">
           <div class="bento-card hover-target reveal-slow">
             <svg viewBox="0 0 24 24"><path d="M13.13 22.19L11.5 18.36C11.33 17.97 11.03 17.67 10.64 17.5L6.81 15.87C4.64 14.95 4.8 11.87 7.04 11.23L18.06 8.08C19.79 7.59 21.41 9.21 20.92 10.94L17.77 21.96C17.13 24.2 14.05 24.36 13.13 22.19Z" opacity="0.3"/><path d="M12.9803 11.0202L15.3403 8.66016" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <h3>Speed</h3><p>Our websites are built on modern frameworks, so they load in milliseconds.</p>
+            <h3>Speed</h3><p>Our websites run on modern frameworks, so they load in milliseconds.</p>
           </div>
           <div class="bento-card hover-target reveal-slow">
             <svg viewBox="0 0 24 24"><path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" opacity="0.3"/><path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <h3>Apple-style</h3><p>Minimalism, attention to detail, smooth animations. We bring the aesthetics of top brands to your project.</p>
+            <h3>Apple-style</h3><p>Minimalism, attention to detail, smooth animations. We bring top-brand aesthetics to your project.</p>
           </div>
           <div class="bento-card hover-target reveal-slow">
             <svg viewBox="0 0 24 24"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" opacity="0.3"/><path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <h3>No Subscriptions</h3><p>You pay once. No monthly fees to website builders like Tilda or Wix.</p>
+            <h3>No subscriptions</h3><p>You pay once. No monthly fees to builders like Tilda or Wix.</p>
           </div>
         </div>
       </div>
@@ -597,7 +577,7 @@
         
         <div class="process-info reveal-slow">
           <h2>Transparent<br>process</h2>
-          <p>From an idea to a live site on Google in a few days. No complicated briefs or delays.</p>
+          <p>From idea to a live site on Google in just a couple of days. No lengthy briefs, no delays.</p>
           
           <div class="core-wrapper">
             <div class="aura-core hover-target">
@@ -613,25 +593,25 @@
           <div class="bento-card hover-target reveal-slow">
             <span class="step-no">01 / TASK</span>
             <h3>20 minutes</h3>
-            <p>We chat in Telegram. Define goals and audience. No boring forms.</p>
+            <p>We talk on Telegram. We define your goals and audience. No boring questionnaires.</p>
           </div>
           
           <div class="bento-card hover-target reveal-slow">
             <span class="step-no">02 / CONCEPT</span>
             <h3>24 hours</h3>
-            <p>Interactive prototype of the hero section. You see the design before coding begins.</p>
+            <p>An interactive prototype of the homepage. You see the design before development even starts.</p>
           </div>
 
           <div class="bento-card hover-target reveal-slow">
             <span class="step-no">03 / CODE</span>
             <h3>1-2 days</h3>
-            <p>Clean code with Astro. Lightning speed (100/100 Google Speed) and smooth animations.</p>
+            <p>Clean code built with Astro. Lightning-fast speed (100/100 Google Speed) and smooth animations.</p>
           </div>
 
           <div class="bento-card hover-target reveal-slow">
             <span class="step-no">04 / LAUNCH</span>
             <h3>Turnkey</h3>
-            <p>Domain, basic SEO indexing, and setup of contact forms directly to your Telegram.</p>
+            <p>Domain setup, basic SEO indexing, and a request form wired straight to your Telegram.</p>
           </div>
         </div>
 
@@ -642,7 +622,7 @@
       <div class="wrap">
         <p class="label reveal-slow">Need a stylish website?</p>
         <div class="reveal-slow"><a href="https://t.me/goblinmane" target="_blank" class="email hover-target">Message on Telegram</a></div>
-        <div class="details reveal-slow"><div><b>Location</b>Vinnytsia (Working worldwide)</div><div><b>Pricing</b>Custom quote</div></div>
+        <div class="details reveal-slow"><div><b>Location</b>Vinnytsia (working remotely worldwide)</div><div><b>Price</b>Custom quote</div></div>
       </div>
     </section>
   </main>
@@ -650,15 +630,14 @@
   <footer>
     <div class="wrap">
       <span>&copy; <span id="year"></span> AURA Studio</span>
-      <div class="socials"><a href="#" class="hover-target">Instagram</a><a href="#top" id="backToTop" class="hover-target">Back to top ↑</a></div>
+      <div class="socials"><a href="#" class="hover-target">Instagram</a><a href="#top" class="hover-target">Back to top ↑</a></div>
     </div>
   </footer>
 </div> <!-- /siteContainer -->
 
 <div class="cursor" id="cursor"><span class="label" id="cursorLabel"></span></div>
 
-<!-- BACK TO TOP BUTTON -->
-<button class="back-to-top hover-target" id="floatingBackToTop" aria-label="Scroll to top">
+<button class="back-to-top hover-target" id="backToTop" aria-label="Scroll to top">
   <svg viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
 </button>
 
@@ -670,29 +649,16 @@
 (function(){
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* 1. CURSOR & NEON TRAIL */
+  /* 1. CURSOR AND GLOBAL INTERACTIVE GRID ON ALL SCREENS */
   const cursor = document.getElementById('cursor');
-  const canvas = document.getElementById('trailCanvas');
-  const ctx = canvas ? canvas.getContext('2d') : null;
   const globalGrid = document.getElementById('globalGrid');
   
   let mouse = { x: -100, y: -100 }; 
   let pos = { x: -100, y: -100 };
-  let trailPoints = [];
-
-  function resizeCanvas() {
-    if(!canvas) return;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-
+  
   window.addEventListener('mousemove', e => {
     mouse.x = e.clientX; 
     mouse.y = e.clientY;
-    
-    trailPoints.push({ x: e.clientX, y: e.clientY, age: 0, maxAge: 60 });
 
     if (globalGrid) {
       const maskStr = `radial-gradient(circle 400px at ${e.clientX}px ${e.clientY}px, black 0%, transparent 100%)`;
@@ -705,35 +671,6 @@
     pos.x += (mouse.x - pos.x) * 0.2; 
     pos.y += (mouse.y - pos.y) * 0.2;
     cursor.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0) translate(-50%, -50%)`;
-
-    if (ctx && canvas && !reduceMotion) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const rgb = isDark ? '41, 151, 255' : '0, 113, 227';
-
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
-      for (let i = 1; i < trailPoints.length; i++) {
-        const p0 = trailPoints[i - 1];
-        const p1 = trailPoints[i];
-        p1.age += 1;
-        const life = 1 - (p1.age / p1.maxAge);
-
-        if (life > 0) {
-          ctx.beginPath();
-          ctx.moveTo(p0.x, p0.y);
-          ctx.lineTo(p1.x, p1.y);
-          ctx.lineWidth = 14 * life;
-          ctx.strokeStyle = `rgba(${rgb}, ${life * 0.6})`;
-          ctx.shadowBlur = 12;
-          ctx.shadowColor = `rgba(${rgb}, ${life})`;
-          ctx.stroke();
-        }
-      }
-      trailPoints = trailPoints.filter(p => p.age < p.maxAge);
-    }
-
     requestAnimationFrame(loop);
   })();
 
@@ -742,7 +679,7 @@
     el.addEventListener('mouseleave', () => { cursor.classList.remove('grow'); });
   });
 
-  /* 2. LIVE CLOCK (ENGLISH FORMAT) */
+  /* 2. LIVE TIME AND DATE WIDGET */
   function updateLiveClock() {
     const now = new Date();
     const timeEl = document.getElementById('liveTime');
@@ -758,7 +695,7 @@
   setInterval(updateLiveClock, 1000);
   updateLiveClock();
 
-  /* 3. BASE UI & INK THEME TOGGLE */
+  /* 3. BASIC UI AND THEME INK ANIMATION */
   document.getElementById('year').textContent = new Date().getFullYear();
   const themeToggle = document.getElementById('themeToggle');
   const html = document.documentElement;
@@ -768,27 +705,24 @@
   };
   updateToggleIcon();
 
-  themeToggle.addEventListener('click', () => {
+  themeToggle.addEventListener('click', async () => {
     const isDark = html.getAttribute('data-theme') === 'dark';
     const newTheme = isDark ? 'light' : 'dark';
-    const wipe = document.getElementById('themeWipe');
 
-    wipe.style.background = isDark ? '#F5F5F7' : '#000000';
-    wipe.style.transition = 'transform 0.6s cubic-bezier(0.76, 0, 0.24, 1)';
-    wipe.style.transform = 'translateY(0)'; 
-
-    setTimeout(() => {
+    if (document.startViewTransition) {
+      html.classList.add('theme-transitioning');
+      const transition = document.startViewTransition(() => {
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateToggleIcon();
+      });
+      await transition.finished;
+      html.classList.remove('theme-transitioning');
+    } else {
       html.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
       updateToggleIcon();
-
-      wipe.style.transform = 'translateY(100%)';
-
-      setTimeout(() => {
-        wipe.style.transition = 'none';
-        wipe.style.transform = 'translateY(-100%)';
-      }, 600);
-    }, 600);
+    }
   });
 
   /* 4. ANIMATIONS (GSAP) */
@@ -845,7 +779,7 @@
     tl.to(preloader, { opacity: 0, duration: 0.4 }, "-=0.4");
   }
 
-  /* 5. INIT GSAP & LENIS */
+  /* 5. LAUNCH GSAP AND LENIS (SMOOTH SCROLL) */
   try {
     if (typeof gsap === 'undefined') throw new Error('GSAP is not loaded');
     gsap.registerPlugin(ScrollTrigger);
@@ -875,11 +809,7 @@
     }
 
     if (typeof Lenis !== 'undefined' && !reduceMotion) {
-      window.lenis = new Lenis({ 
-        duration: 1.6, 
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
-        smoothWheel: true 
-      });
+      window.lenis = new Lenis({ duration: 1.2, smoothWheel: true });
       function raf(time){ window.lenis.raf(time); requestAnimationFrame(raf); }
       requestAnimationFrame(raf);
       ScrollTrigger.update();
@@ -887,21 +817,18 @@
       gsap.ticker.lagSmoothing(0);
     }
 
-    /* SMOOTH SCROLLING FOR ALL ANCHOR LINKS */
+    /* SMOOTH SCROLL FOR ANCHOR LINKS AND NAV */
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const targetID = this.getAttribute('href');
         const targetElement = document.querySelector(targetID);
-        
-        if (window.lenis) {
-          const isTop = targetID === '#top';
-          window.lenis.scrollTo(isTop ? 0 : targetElement, { 
-            duration: isTop ? 3.5 : 1.5,
-            easing: (t) => 1 - Math.pow(1 - t, 4) 
-          });
-        } else if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth' });
+        if (targetElement) {
+          if (window.lenis) {
+            window.lenis.scrollTo(targetElement, { offset: 0 });
+          } else {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+          }
         }
       });
     });
@@ -915,38 +842,33 @@
     document.body.style.overflow = '';
   }
 
-  /* 6. BACK TO TOP BUTTON LOGIC */
-  const backToTopBtn = document.getElementById('floatingBackToTop');
+  /* 6. BACK-TO-TOP BUTTON — appears on scroll down */
+  const backToTop = document.getElementById('backToTop');
   const heroEl = document.getElementById('hero');
+  const SHOW_AFTER = 400; // px scrolled before the button appears
 
   function toggleBackToTop() {
-    if(!backToTopBtn) return;
     const scrolled = window.scrollY || document.documentElement.scrollTop;
-    const threshold = heroEl ? heroEl.offsetHeight * 0.6 : 400;
+    const threshold = heroEl ? heroEl.offsetHeight * 0.6 : SHOW_AFTER;
     if (scrolled > threshold) {
-      backToTopBtn.classList.add('visible');
+      backToTop.classList.add('visible');
     } else {
-      backToTopBtn.classList.remove('visible');
+      backToTop.classList.remove('visible');
     }
   }
 
   window.addEventListener('scroll', toggleBackToTop, { passive: true });
   toggleBackToTop();
 
-  if(backToTopBtn) {
-    backToTopBtn.addEventListener('click', () => {
-      if (window.lenis) {
-        window.lenis.scrollTo(0, { 
-          duration: 3.5,
-          easing: (t) => 1 - Math.pow(1 - t, 4) 
-        });
-      } else if (!reduceMotion) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        window.scrollTo(0, 0);
-      }
-    });
-  }
+  backToTop.addEventListener('click', () => {
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { duration: 1.2 });
+    } else if (!reduceMotion) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  });
 
 })();
 </script>
