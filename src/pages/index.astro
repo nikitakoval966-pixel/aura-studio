@@ -43,7 +43,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   @media (hover: hover) and (pointer: fine) {
-    *, a, button, .pill, .theme-btn, .bento-card, .step-card, .hero-widget { cursor: none !important; }
+    *, a, button, .pill, .theme-btn, .bento-card, .step-card, .hero-widget, .back-to-top { cursor: none !important; }
   }
 
   body, .bento-card, .nav::before, footer, .marquee, .cta, .step-card {
@@ -70,7 +70,7 @@
   .wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
   @media (min-width: 768px) { .wrap { padding: 0 40px; } }
 
-  /* ============ АНІМАЦІЯ ПЕРЕХОДУ ТЕМИ (РІДКІ ЧОРНИЛА) ============ */
+  /* ============ ШТОРКА ДЛЯ ТЕМЫ (ЧЕРНИЛА) ============ */
   html::view-transition-old(root),
   html::view-transition-new(root) {
     animation-duration: 0.8s;
@@ -90,6 +90,19 @@
     to { clip-path: inset(0 0 0 0); }
   }
 
+  .theme-wipe {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+    z-index: 999999;
+    background: #000;
+    transform: translateY(-100%);
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  #trailCanvas {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  }
+
   @keyframes float {
     0% { transform: translate(0, 0) scale(1); }
     33% { transform: translate(40px, -60px) scale(1.1); }
@@ -97,7 +110,7 @@
     100% { transform: translate(0, 0) scale(1); }
   }
 
-  /* ============ ГЛОБАЛЬНА ІНТЕРАКТИВНА СІТКА ============ */
+  /* ============ ГЛОБАЛЬНА СІТКА ============ */
   .global-grid {
     position: fixed; inset: 0; pointer-events: none; z-index: -1;
     background-size: 50px 50px;
@@ -149,26 +162,43 @@
     border: 1px solid rgba(255,255,255,0.2);
   }
 
-  @media (pointer:coarse) { .cursor { display: none; } }
+  @media (pointer:coarse) { .cursor { display: none; } #trailCanvas { display: none; } }
 
-  /* ============ ПРЕЛОАДЕР ============ */
+  /* ============ ПРЕЛОАДЕР (СТРОГИЙ) ============ */
   .preloader {
     position: fixed; inset: 0; z-index: 9998;
     background: var(--bg); 
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     visibility: visible; 
+    overflow: hidden;
+  }
+
+  .preloader-glow {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 40vw; height: 40vw; max-width: 500px; max-height: 500px;
+    background: var(--accent);
+    filter: blur(120px); border-radius: 50%;
+    opacity: 0.3;
+    animation: pulseAura 2.5s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  html[data-theme="dark"] .preloader-glow { opacity: 0.2; filter: blur(150px); }
+
+  @keyframes pulseAura {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.15; }
+    100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.4; }
   }
   
   .loader-brand {
     font-size: clamp(3.5rem, 12vw, 8rem);
     font-weight: 800; letter-spacing: -0.06em; line-height: 1;
     color: var(--paper); display: flex; align-items: center; justify-content: center;
-    position: relative;
+    position: relative; z-index: 2;
     will-change: transform, opacity;
   }
 
   .loader-brand::after {
-    content: 'This Is Aura.';
+    content: 'This Is Aura';
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
     background-size: 200% 100%;
@@ -189,7 +219,7 @@
   }
 
   .loader-count {
-    position: absolute; bottom: 40px; 
+    position: absolute; bottom: 40px; z-index: 2;
     font-size: 0.85rem; font-weight: 600; color: var(--muted); letter-spacing: 0.05em;
     font-variant-numeric: tabular-nums;
   }
@@ -232,7 +262,7 @@
   .nav .links a.pill:hover{ transform: scale(1.05); }
   @media (max-width:860px){ .nav .links > a:not(.pill, .lang-btn){ display:none; } .controls { margin-left: 0.5rem; padding-left: 0.5rem; } }
 
-  /* ============ HERO ============ */
+  /* ============ HERO (ВИПРАВЛЕНО ВЕРСТКУ) ============ */
   .hero { 
     min-height: 80svh; display:flex; flex-direction:column; justify-content:center; 
     padding-top: 6rem; position:relative;
@@ -243,22 +273,23 @@
     gap: 3rem; flex-wrap: wrap; position: relative; z-index: 1; 
   }
 
-  .hero-text { flex: 1; min-width: 320px; }
+  /* flex-basis: 480px гарантує, що текст не стискатиметься до 4-х рядків. Якщо місця мало - віджет впаде вниз */
+  .hero-text { flex: 1 1 480px; min-width: 300px; } 
   .hero .eyebrow { font-size:0.95rem; font-weight:600; color:var(--muted); margin-bottom:1.5rem; }
-  .hero h1 { font-size: clamp(2.2rem, 9vw, 6.5rem); line-height: 1.05; font-weight: 800; letter-spacing: -0.04em; }
-  .hero h1 .line { overflow:hidden; display:block; padding-bottom: 0.1em; margin-bottom: -0.1em; }
-  .hero h1 .line span { display:inline-block; transform:translateY(110%); }
-  .hero .sub { margin-top:2rem; max-width:48ch; font-size: clamp(1rem, 2vw, 1.1rem); font-weight:500; color:var(--muted); opacity:0; transform:translateY(16px); }
+  
+  .hero h1 { font-size: clamp(2.5rem, 6.5vw, 6rem); line-height: 1.05; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 1rem; }
+  .hero .sub { margin-top:1.5rem; max-width:48ch; font-size: clamp(1rem, 2vw, 1.1rem); font-weight:500; color:var(--muted); opacity:0; transform:translateY(16px); }
 
-  /* ============ ІНТЕРАКТИВНИЙ ВІДЖЕТ ============ */
+  /* ============ ВІДЖЕТ ============ */
   .hero-widget {
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(40px) saturate(200%);
     -webkit-backdrop-filter: blur(40px) saturate(200%);
     border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 32px;
-    padding: 2rem;
-    min-width: 360px;
+    padding: 2.5rem 2rem;
+    flex: 0 0 auto; /* Віджет не стискається */
+    min-width: 380px; 
     box-shadow: 0 30px 60px rgba(0, 113, 227, 0.1), inset 0 1px 0 rgba(255,255,255,0.8);
     opacity: 0; transform: translateY(30px) scale(0.95);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
@@ -277,7 +308,7 @@
 
   .widget-row { 
     display: flex; align-items: center; justify-content: space-between; 
-    gap: 1.5rem; padding: 1rem 0; border-bottom: 1px solid var(--line); 
+    gap: 2rem; padding: 1.2rem 0; border-bottom: 1px solid var(--line); 
     font-size: 0.95rem; font-weight: 600;
   }
   .widget-row:last-child { border-bottom: none; padding-bottom: 0; }
@@ -290,6 +321,12 @@
   .widget-label { color: var(--paper); white-space: nowrap; flex-shrink: 0; }
   .widget-value { color: var(--muted); white-space: nowrap; text-align: right; }
   .time-value { background: var(--paper); color: var(--bg-panel); padding: 0.2rem 0.6rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700; }
+
+  @media (max-width: 860px) {
+    .hero-widget { min-width: 100%; width: 100%; padding: 1.5rem; }
+    .widget-row { gap: 1rem; padding: 1rem 0; font-size: 0.85rem; }
+    .hero-wrap { gap: 2rem; }
+  }
 
   /* ============ MARQUEE ============ */
   .marquee { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: clamp(1rem, 3vw, 1.5rem) 0; overflow: hidden; background: var(--bg-panel); margin-top: clamp(3rem, 8vw, 6rem); width: 100%; }
@@ -345,13 +382,20 @@
   /* ============ ПРОЦЕС ============ */
   .process { padding: clamp(5rem, 10vw, 10rem) 0; position: relative; }
   .process .wrap { display: grid; grid-template-columns: 0.8fr 1.5fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
-  @media (max-width: 900px) { .process .wrap { grid-template-columns: 1fr; gap: 3rem; } }
-
+  
   .process-info { position: sticky; top: 120px; }
   .process-info h2 { font-size: clamp(2.2rem, 4vw, 3.6rem); margin-bottom: 1rem; line-height: 1.1; }
   .process-info p { color: var(--muted); font-size: 1rem; font-weight: 500; max-width: 30ch; }
   
-  .core-wrapper { perspective: 1000px; margin-top: 3rem; display: inline-block; }
+  .core-wrapper { perspective: 1000px; margin-top: 3rem; display: flex; align-items: center; } 
+  
+  @media (max-width: 900px) { 
+    .process .wrap { grid-template-columns: 1fr; gap: 3rem; } 
+    .process-info { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .process-info p { text-align: center; }
+    .core-wrapper { margin-top: 2rem; justify-content: center; width: 100%; } 
+  }
+
   .aura-core {
     width: 100px; height: 100px; position: relative; transform-style: preserve-3d;
     animation: spinCore 15s linear infinite;
@@ -394,7 +438,7 @@
 
   .reveal-slow { visibility: hidden; }
 
-  /* ============ КНОПКА "НАВЕРХ" (ЯЗЫЧОК) ============ */
+  /* ============ КНОПКА "НАВЕРХ" ============ */
   .back-to-top {
     position: fixed;
     right: clamp(16px, 4vw, 32px);
@@ -449,12 +493,18 @@
 </head>
 <body id="top">
 
+<div id="themeWipe" class="theme-wipe"></div>
+
+<canvas id="trailCanvas"></canvas>
+
+<!-- ПРЕЛОАДЕР ТІЛЬКИ З АУРОЮ БЕЗ БЛИСКІТОК -->
 <div class="preloader" id="preloader">
-  <div class="loader-brand" id="loaderBrand">This Is Aura.</div>
+  <div class="preloader-glow"></div>
+  
+  <div class="loader-brand" id="loaderBrand">This Is Aura</div>
   <div class="loader-count" id="loaderCount">000%</div>
 </div>
 
-<!-- ГЛОБАЛЬНА СІТКА ВИКОНАНА В ОКРЕМОМУ ШАРІ -->
 <div class="global-grid" id="globalGrid"></div>
 
 <div id="siteContainer" style="opacity: 0; transform: scale(1.05);">
@@ -481,10 +531,10 @@
       <div class="wrap hero-wrap">
         <div class="hero-text">
           <p class="eyebrow reveal-slow">AURA — креативна студія дизайну</p>
-          <h1 class="reveal-slow">
-            <span class="line"><span>Створюємо сайти,</span></span>
-            <span class="line"><span>що продають.</span></span>
-          </h1>
+          
+          <!-- ЗМІНИЛИ СТРУКТУРУ ТЕКСТУ, ЩОБ ВІН НЕ ЛАМАВСЯ -->
+          <h1 class="reveal-hero" id="heroTitle">Створюємо сайти,<br>що продають</h1>
+          
           <p class="sub reveal-slow">Сучасний дизайн, плавні анімації та преміальна якість. Ми робимо так, щоб ваш бізнес виглядав дорого.</p>
         </div>
 
@@ -631,15 +681,14 @@
   <footer>
     <div class="wrap">
       <span>&copy; <span id="year"></span> AURA Studio</span>
-      <div class="socials"><a href="#" class="hover-target">Instagram</a><a href="#top" class="hover-target">Вгору ↑</a></div>
+      <div class="socials"><a href="#" class="hover-target">Instagram</a><a href="#top" id="backToTopLink" class="hover-target">Вгору ↑</a></div>
     </div>
   </footer>
 </div> <!-- /siteContainer -->
 
 <div class="cursor" id="cursor"><span class="label" id="cursorLabel"></span></div>
 
-<!-- КНОПКА "НАВЕРХ" — язичок, що виїжджає при скролі вниз -->
-<button class="back-to-top hover-target" id="backToTop" aria-label="Прокрутити наверх">
+<button class="back-to-top hover-target" id="backToTopBtn" aria-label="Прокрутити наверх">
   <svg viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
 </button>
 
@@ -651,16 +700,29 @@
 (function(){
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* 1. КУРСОР ТА ГЛОБАЛЬНА ІНТЕРАКТИВНА СІТКА НА ВСІХ ЕКРАНАХ */
+  /* 1. КУРСОР ТА СЛІД (CANVAS) */
   const cursor = document.getElementById('cursor');
+  const canvas = document.getElementById('trailCanvas');
+  const ctx = canvas ? canvas.getContext('2d') : null;
   const globalGrid = document.getElementById('globalGrid');
   
   let mouse = { x: -100, y: -100 }; 
   let pos = { x: -100, y: -100 };
-  
+  let trailPoints = [];
+
+  function resizeCanvas() {
+    if(!canvas) return;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
   window.addEventListener('mousemove', e => {
     mouse.x = e.clientX; 
     mouse.y = e.clientY;
+    
+    trailPoints.push({ x: e.clientX, y: e.clientY, age: 0, maxAge: 60 });
 
     if (globalGrid) {
       const maskStr = `radial-gradient(circle 400px at ${e.clientX}px ${e.clientY}px, black 0%, transparent 100%)`;
@@ -673,6 +735,34 @@
     pos.x += (mouse.x - pos.x) * 0.2; 
     pos.y += (mouse.y - pos.y) * 0.2;
     cursor.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0) translate(-50%, -50%)`;
+
+    if (ctx && canvas && !reduceMotion) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const rgb = isDark ? '41, 151, 255' : '0, 113, 227';
+
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      for (let i = 1; i < trailPoints.length; i++) {
+        const p0 = trailPoints[i - 1];
+        const p1 = trailPoints[i];
+        p1.age += 1;
+        const life = 1 - (p1.age / p1.maxAge);
+
+        if (life > 0) {
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y);
+          ctx.lineTo(p1.x, p1.y);
+          ctx.lineWidth = 14 * life;
+          ctx.strokeStyle = `rgba(${rgb}, ${life * 0.6})`;
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = `rgba(${rgb}, ${life})`;
+          ctx.stroke();
+        }
+      }
+      trailPoints = trailPoints.filter(p => p.age < p.maxAge);
+    }
     requestAnimationFrame(loop);
   })();
 
@@ -681,7 +771,7 @@
     el.addEventListener('mouseleave', () => { cursor.classList.remove('grow'); });
   });
 
-  /* 2. LIVE ВІДЖЕТ ЧАСУ ТА ДАТИ */
+  /* 2. ВІДЖЕТ ЧАСУ ТА ДАТИ */
   function updateLiveClock() {
     const now = new Date();
     const timeEl = document.getElementById('liveTime');
@@ -697,7 +787,7 @@
   setInterval(updateLiveClock, 1000);
   updateLiveClock();
 
-  /* 3. БАЗОВИЙ UI ТА ІНК-АНІМАЦІЯ ТЕМИ */
+  /* 3. ШТОРКА ЗМІНИ ТЕМИ */
   document.getElementById('year').textContent = new Date().getFullYear();
   const themeToggle = document.getElementById('themeToggle');
   const html = document.documentElement;
@@ -707,19 +797,28 @@
   };
   updateToggleIcon();
 
-  themeToggle.addEventListener('click', async () => {
+  themeToggle.addEventListener('click', () => {
     const isDark = html.getAttribute('data-theme') === 'dark';
     const newTheme = isDark ? 'light' : 'dark';
+    const wipe = document.getElementById('themeWipe');
 
-    if (document.startViewTransition) {
-      html.classList.add('theme-transitioning');
-      const transition = document.startViewTransition(() => {
+    if(wipe) {
+      wipe.style.background = isDark ? '#F5F5F7' : '#000000';
+      wipe.style.transition = 'transform 0.6s cubic-bezier(0.76, 0, 0.24, 1)';
+      wipe.style.transform = 'translateY(0)'; 
+
+      setTimeout(() => {
         html.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         updateToggleIcon();
-      });
-      await transition.finished;
-      html.classList.remove('theme-transitioning');
+
+        wipe.style.transform = 'translateY(100%)';
+
+        setTimeout(() => {
+          wipe.style.transition = 'none';
+          wipe.style.transform = 'translateY(-100%)';
+        }, 600);
+      }, 600);
     } else {
       html.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
@@ -727,7 +826,7 @@
     }
   });
 
-  /* 4. АНІМАЦІЇ (GSAP) */
+  /* 4. GSAP АНІМАЦІЇ */
   const countEl = document.getElementById('loaderCount');
   const brandEl = document.getElementById('loaderBrand');
   const preloader = document.getElementById('preloader');
@@ -735,14 +834,21 @@
 
   function runHeroEntrance() {
     if(reduceMotion || typeof gsap === 'undefined') {
-      document.getElementById('heroWidget').style.opacity = 1;
-      document.getElementById('heroWidget').style.transform = 'none';
+      const hw = document.getElementById('heroWidget');
+      const ht = document.getElementById('heroTitle');
+      if (hw) { hw.style.opacity = 1; hw.style.transform = 'none'; }
+      if (ht) { ht.style.opacity = 1; ht.style.transform = 'none'; }
       return;
     }
+    
+    // Анімуємо текст і віджет після завантаження
     const tl = gsap.timeline({ defaults:{ ease:'power3.out' } });
-    tl.to('.hero h1 .line span', { y:'0%', duration: 1.2, stagger: 0.1 }, "+=0.2")
-      .to('.hero .sub', { opacity: 1, y: 0, duration: 1 }, '-=0.8')
-      .to('#heroWidget', { opacity: 1, y: 0, scale: 1, duration: 1 }, '-=0.8');
+    
+    tl.fromTo('#heroTitle', {opacity: 0, y: 30}, { opacity: 1, y: 0, duration: 1.2 }, "+=0.2")
+      .fromTo('.hero .sub', {opacity: 0, y: 20}, { opacity: 1, y: 0, duration: 1 }, '-=0.8');
+
+    const hw = document.getElementById('heroWidget');
+    if (hw) tl.to(hw, { opacity: 1, y: 0, scale: 1, duration: 1 }, '-=0.8');
   }
 
   function triggerZoomReveal() {
@@ -765,6 +871,7 @@
     });
 
     tl.to(countEl, { opacity: 0, duration: 0.2, ease: "power2.out" }, 0);
+    tl.to('.preloader-glow', { opacity: 0, duration: 0.3 }, 0); // Ховаємо світіння
     tl.to(brandEl, { scale: 0.9, duration: 0.3, ease: "power2.out" }, "+=0.1");
 
     tl.to(brandEl, {
@@ -781,12 +888,15 @@
     tl.to(preloader, { opacity: 0, duration: 0.4 }, "-=0.4");
   }
 
-  /* 5. ЗАПУСК GSAP ТА LENIS (ПЛАВНИЙ СКРОЛ) */
+  /* 5. LENIS ПЛАВНИЙ СКРОЛ */
   try {
     if (typeof gsap === 'undefined') throw new Error('GSAP is not loaded');
     gsap.registerPlugin(ScrollTrigger);
 
     document.body.style.overflow = 'hidden';
+
+    // Початково приховуємо заголовок, щоб він плавно з'явився
+    gsap.set('#heroTitle, .hero .sub', { opacity: 0, y: 30 });
 
     let obj = { val: 0 };
     gsap.to(obj, {
@@ -794,14 +904,14 @@
       duration: 1.5,
       ease: "power1.inOut",
       onUpdate: () => {
-        countEl.textContent = Math.floor(obj.val).toString().padStart(3, '0') + '%';
+        if(countEl) countEl.textContent = Math.floor(obj.val).toString().padStart(3, '0') + '%';
       },
       onComplete: triggerZoomReveal
     });
 
     if(!reduceMotion){
       gsap.utils.toArray('.reveal-slow').forEach(function(elem) {
-        if(elem.id === 'heroWidget') return;
+        if(elem.id === 'heroWidget' || elem.id === 'heroTitle' || elem.classList.contains('sub')) return;
         gsap.set(elem, { autoAlpha: 0, y: 30 });
         gsap.to(elem, {
           scrollTrigger: { trigger: elem, start: "top 85%", once: true },
@@ -811,7 +921,11 @@
     }
 
     if (typeof Lenis !== 'undefined' && !reduceMotion) {
-      window.lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+      window.lenis = new Lenis({ 
+        duration: 1.6, 
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+        smoothWheel: true 
+      });
       function raf(time){ window.lenis.raf(time); requestAnimationFrame(raf); }
       requestAnimationFrame(raf);
       ScrollTrigger.update();
@@ -819,58 +933,67 @@
       gsap.ticker.lagSmoothing(0);
     }
 
-    /* ПЛАВНИЙ СКРОЛ ДЛЯ КНОПОК ТА МЕНЮ */
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const targetID = this.getAttribute('href');
         const targetElement = document.querySelector(targetID);
-        if (targetElement) {
-          if (window.lenis) {
-            window.lenis.scrollTo(targetElement, { offset: 0 });
-          } else {
-            targetElement.scrollIntoView({ behavior: 'smooth' });
-          }
+        
+        if (window.lenis) {
+          const isTop = targetID === '#top';
+          window.lenis.scrollTo(isTop ? 0 : targetElement, { 
+            duration: isTop ? 3.5 : 1.5,
+            easing: (t) => 1 - Math.pow(1 - t, 4) 
+          });
+        } else if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
         }
       });
     });
 
   } catch (e) {
     console.error('Effects failed, falling back:', e);
-    preloader.style.display = 'none';
-    siteContainer.style.visibility = 'visible';
-    siteContainer.style.opacity = 1;
-    siteContainer.style.transform = 'none';
+    if(preloader) preloader.style.display = 'none';
+    if(siteContainer) {
+      siteContainer.style.visibility = 'visible';
+      siteContainer.style.opacity = 1;
+      siteContainer.style.transform = 'none';
+    }
     document.body.style.overflow = '';
   }
 
-  /* 6. КНОПКА "НАВЕРХ" — з'являється при скролі вниз */
-  const backToTop = document.getElementById('backToTop');
+  /* 6. КНОПКА "ВГОРУ" */
+  const backToTopBtn = document.getElementById('backToTopBtn');
   const heroEl = document.getElementById('hero');
-  const SHOW_AFTER = 400; // px прокрутки, після яких з'являється кнопка
 
   function toggleBackToTop() {
+    if(!backToTopBtn) return;
     const scrolled = window.scrollY || document.documentElement.scrollTop;
-    const threshold = heroEl ? heroEl.offsetHeight * 0.6 : SHOW_AFTER;
+    const threshold = heroEl ? heroEl.offsetHeight * 0.6 : 400;
     if (scrolled > threshold) {
-      backToTop.classList.add('visible');
+      backToTopBtn.classList.add('visible');
     } else {
-      backToTop.classList.remove('visible');
+      backToTopBtn.classList.remove('visible');
     }
   }
 
   window.addEventListener('scroll', toggleBackToTop, { passive: true });
   toggleBackToTop();
 
-  backToTop.addEventListener('click', () => {
-    if (window.lenis) {
-      window.lenis.scrollTo(0, { duration: 1.2 });
-    } else if (!reduceMotion) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      window.scrollTo(0, 0);
-    }
-  });
+  if(backToTopBtn) {
+    backToTopBtn.addEventListener('click', () => {
+      if (window.lenis) {
+        window.lenis.scrollTo(0, { 
+          duration: 3.5,
+          easing: (t) => 1 - Math.pow(1 - t, 4) 
+        });
+      } else if (!reduceMotion) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.scrollTo(0, 0);
+      }
+    });
+  }
 
 })();
 </script>
