@@ -43,10 +43,10 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   @media (hover: hover) and (pointer: fine) {
-    *, a, button, .pill, .visual, .theme-btn, .bento-card { cursor: none !important; }
+    *, a, button, .pill, .theme-btn, .bento-card, .step-card, .hero-widget { cursor: none !important; }
   }
 
-  body, .bento-card, .nav::before, footer, .marquee, .cta, .work .visual {
+  body, .bento-card, .nav::before, footer, .marquee, .cta, .step-card {
     transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
   }
 
@@ -70,6 +70,26 @@
   .wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
   @media (min-width: 768px) { .wrap { padding: 0 40px; } }
 
+  /* ============ АНІМАЦІЯ ПЕРЕХОДУ ТЕМИ (РІДКІ ЧОРНИЛА) ============ */
+  html::view-transition-old(root),
+  html::view-transition-new(root) {
+    animation-duration: 0.8s;
+    animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+    mix-blend-mode: normal;
+  }
+  html.theme-transitioning::view-transition-old(root) {
+    z-index: 1;
+    animation: none;
+  }
+  html.theme-transitioning::view-transition-new(root) {
+    z-index: 2;
+    animation: ink-fill 0.8s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  }
+  @keyframes ink-fill {
+    from { clip-path: inset(0 0 100% 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+
   @keyframes float {
     0% { transform: translate(0, 0) scale(1); }
     33% { transform: translate(40px, -60px) scale(1.1); }
@@ -77,10 +97,26 @@
     100% { transform: translate(0, 0) scale(1); }
   }
 
+  /* ============ ГЛОБАЛЬНА ІНТЕРАКТИВНА СІТКА ============ */
+  .global-grid {
+    position: fixed; inset: 0; pointer-events: none; z-index: -1;
+    background-size: 50px 50px;
+    background-image:
+      linear-gradient(to right, rgba(0, 113, 227, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 113, 227, 0.1) 1px, transparent 1px);
+    -webkit-mask-image: radial-gradient(circle 0px at center, black 0%, transparent 100%);
+    mask-image: radial-gradient(circle 0px at center, black 0%, transparent 100%);
+  }
+  html[data-theme="dark"] .global-grid {
+    background-image:
+      linear-gradient(to right, rgba(41, 151, 255, 0.15) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(41, 151, 255, 0.15) 1px, transparent 1px);
+  }
+
   .glow-circle {
     position: absolute; width: 60vw; height: 60vw; max-width: 600px; max-height: 600px;
     background: radial-gradient(circle, rgba(0,113,227,0.06) 0%, rgba(255,255,255,0) 70%);
-    border-radius: 50%; filter: blur(60px); z-index: -1; pointer-events: none;
+    border-radius: 50%; filter: blur(60px); z-index: -3; pointer-events: none;
     animation: float 20s ease-in-out infinite;
   }
   .glow-1 { top: -5%; left: -10%; }
@@ -101,7 +137,6 @@
     display: flex; align-items: center; justify-content: center;
   }
   
-  /* Наведение на меню/кнопки -> РАЗМЫТИЕ (СТЕКЛО) БЕЗ ТЕКСТА */
   .cursor.grow { 
     width: 64px; height: 64px; 
     background: rgba(0, 0, 0, 0.05);
@@ -114,28 +149,9 @@
     border: 1px solid rgba(255,255,255,0.2);
   }
 
-  /* Наведение НА ФОТОГРАФИИ -> БОЛЬШОЙ КРУГ С ТЕКСТОМ */
-  .cursor.grow-visual { 
-    width: 90px; height: 90px; 
-    background: rgba(29, 29, 31, 0.95);
-    border: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  html[data-theme="dark"] .cursor.grow-visual { background: rgba(245, 245, 247, 0.95); }
-
-  /* Текст внутри курсора (проявится только на фото) */
-  .cursor .label {
-    font-family: var(--sans); font-size: 0.65rem; font-weight: 700; 
-    color: #fff; 
-    opacity: 0; transition: opacity .2s ease; text-transform: uppercase; letter-spacing: 0.05em;
-  }
-  html[data-theme="dark"] .cursor.grow-visual .label { color: #000; }
-  .cursor.grow-visual .label { opacity: 1; }
-
   @media (pointer:coarse) { .cursor { display: none; } }
 
-  /* ============ NEW PRELOADER (HYPER-ZOOM) ============ */
+  /* ============ ПРЕЛОАДЕР ============ */
   .preloader {
     position: fixed; inset: 0; z-index: 9998;
     background: var(--bg); 
@@ -182,7 +198,7 @@
   .nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 150;
     border-bottom: 1px solid var(--line);
-    isolation: isolate; /* Фикс для бага с рендерингом фильтров */
+    isolation: isolate; 
   }
   
   .nav::before {
@@ -192,9 +208,7 @@
     backdrop-filter: saturate(180%) blur(10px);
     -webkit-backdrop-filter: saturate(180%) blur(10px);
   }
-  html[data-theme="dark"] .nav::before { 
-    background: rgba(0, 0, 0, 0.75); 
-  }
+  html[data-theme="dark"] .nav::before { background: rgba(0, 0, 0, 0.75); }
   
   .nav .wrap{ display:flex; align-items:center; justify-content:space-between; height: 60px; }
   .nav .brand{ font-size:1.1rem; font-weight:800; letter-spacing: -0.02em; flex-shrink: 0;}
@@ -219,12 +233,63 @@
   @media (max-width:860px){ .nav .links > a:not(.pill, .lang-btn){ display:none; } .controls { margin-left: 0.5rem; padding-left: 0.5rem; } }
 
   /* ============ HERO ============ */
-  .hero{ min-height: 70svh; display:flex; flex-direction:column; justify-content:center; padding-top: 8rem; position:relative; }
-  .hero .eyebrow{ font-size:0.95rem; font-weight:600; color:var(--muted); margin-bottom:1.5rem; }
-  .hero h1{ font-size: clamp(2.2rem, 9vw, 7.5rem); line-height: 1.05; font-weight: 800; letter-spacing: -0.04em; }
-  .hero h1 .line{ overflow:hidden; display:block; padding-bottom: 0.1em; margin-bottom: -0.1em; }
-  .hero h1 .line span{ display:inline-block; transform:translateY(110%); }
-  .hero .sub{ margin-top:2rem; max-width:48ch; font-size: clamp(1rem, 2vw, 1.1rem); font-weight:500; color:var(--muted); opacity:0; transform:translateY(16px); }
+  .hero { 
+    min-height: 80svh; display:flex; flex-direction:column; justify-content:center; 
+    padding-top: 6rem; position:relative;
+  }
+  
+  .hero-wrap { 
+    display: flex; align-items: center; justify-content: space-between; 
+    gap: 3rem; flex-wrap: wrap; position: relative; z-index: 1; 
+  }
+
+  .hero-text { flex: 1; min-width: 320px; }
+  .hero .eyebrow { font-size:0.95rem; font-weight:600; color:var(--muted); margin-bottom:1.5rem; }
+  .hero h1 { font-size: clamp(2.2rem, 9vw, 6.5rem); line-height: 1.05; font-weight: 800; letter-spacing: -0.04em; }
+  .hero h1 .line { overflow:hidden; display:block; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+  .hero h1 .line span { display:inline-block; transform:translateY(110%); }
+  .hero .sub { margin-top:2rem; max-width:48ch; font-size: clamp(1rem, 2vw, 1.1rem); font-weight:500; color:var(--muted); opacity:0; transform:translateY(16px); }
+
+  /* ============ ІНТЕРАКТИВНИЙ ВІДЖЕТ ============ */
+  .hero-widget {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 32px;
+    padding: 2rem;
+    min-width: 360px;
+    box-shadow: 0 30px 60px rgba(0, 113, 227, 0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+    opacity: 0; transform: translateY(30px) scale(0.95);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+  html[data-theme="dark"] .hero-widget {
+    background: rgba(30, 30, 32, 0.4);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .hero-widget:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 40px 80px rgba(0, 113, 227, 0.15), inset 0 1px 0 rgba(255,255,255,0.8);
+    border-color: rgba(0, 113, 227, 0.3);
+  }
+  html[data-theme="dark"] .hero-widget:hover { box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1); }
+
+  .widget-row { 
+    display: flex; align-items: center; justify-content: space-between; 
+    gap: 1.5rem; padding: 1rem 0; border-bottom: 1px solid var(--line); 
+    font-size: 0.95rem; font-weight: 600;
+  }
+  .widget-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .widget-row:first-child { padding-top: 0; }
+
+  .status-badge { display: flex; align-items: center; gap: 10px; color: var(--paper); font-weight: 700; letter-spacing: -0.02em;}
+  .status-badge .dot { width: 10px; height: 10px; background: #34C759; border-radius: 50%; box-shadow: 0 0 12px #34C759; animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+
+  .widget-label { color: var(--paper); white-space: nowrap; flex-shrink: 0; }
+  .widget-value { color: var(--muted); white-space: nowrap; text-align: right; }
+  .time-value { background: var(--paper); color: var(--bg-panel); padding: 0.2rem 0.6rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700; }
 
   /* ============ MARQUEE ============ */
   .marquee { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: clamp(1rem, 3vw, 1.5rem) 0; overflow: hidden; background: var(--bg-panel); margin-top: clamp(3rem, 8vw, 6rem); width: 100%; }
@@ -277,23 +342,40 @@
 
   @media (max-width: 900px) { .bento-grid { grid-template-columns: 1fr; } }
 
-  /* ============ WORKS ============ */
-  .works{ padding:clamp(4rem,10vw,10rem) 0; }
-  .works .head { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-bottom: clamp(3rem, 6vw, 5rem); gap: 1rem; }
-  .works .head h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
-  .works .head p { max-width: 40ch; color: var(--muted); font-size: 1rem; font-weight: 500; margin: 0 auto; }
-  .work { display: grid; grid-template-columns: 0.8fr 1.5fr 0.8fr; gap: clamp(1rem, 3vw, 3rem); align-items: center; padding: clamp(2.5rem, 6vw, 4rem) 0; border-bottom: 1px solid var(--line); }
-  .work:first-child { border-top: 1px solid var(--line); }
-  .work .meta{ display:flex; flex-direction:column; gap:0.5rem; }
-  .work .meta .no{ font-size:0.85rem; font-weight:700; color:var(--muted); }
-  .work .meta h3{ font-size:clamp(1.5rem,3vw,2.4rem); }
-  .work .meta .loc{ color:var(--muted); font-size:0.95rem; font-weight:600;}
-  .work .visual { aspect-ratio:16/10; border-radius:24px; overflow:hidden; background:var(--bg-panel); position:relative; box-shadow: 0 10px 30px rgba(0,0,0,0.04); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.5s ease; }
-  .work .visual:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 24px 48px rgba(0,0,0,0.12); }
-  .work .visual img { width: 100%; height: 120%; object-fit: cover; transform: translateY(-10%); }
-  .work .specs{ font-size:0.85rem; font-weight:500; color:var(--muted); line-height:2; justify-self:end; text-align:right;}
-  .work .specs b{ color:var(--paper); display:block; font-size:0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-top:0.5rem;}
-  @media (max-width:900px){ .work { grid-template-columns:1fr; padding: 2.5rem 0; } .work .specs { justify-self:start; text-align:left; display: flex; gap: 2rem; flex-wrap: wrap;} .work .specs b { margin-top: 0; } }
+  /* ============ ПРОЦЕС ============ */
+  .process { padding: clamp(5rem, 10vw, 10rem) 0; position: relative; }
+  .process .wrap { display: grid; grid-template-columns: 0.8fr 1.5fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  @media (max-width: 900px) { .process .wrap { grid-template-columns: 1fr; gap: 3rem; } }
+
+  .process-info { position: sticky; top: 120px; }
+  .process-info h2 { font-size: clamp(2.2rem, 4vw, 3.6rem); margin-bottom: 1rem; line-height: 1.1; }
+  .process-info p { color: var(--muted); font-size: 1rem; font-weight: 500; max-width: 30ch; }
+  
+  .core-wrapper { perspective: 1000px; margin-top: 3rem; display: inline-block; }
+  .aura-core {
+    width: 100px; height: 100px; position: relative; transform-style: preserve-3d;
+    animation: spinCore 15s linear infinite;
+  }
+  .aura-core .ring {
+    position: absolute; inset: 0; border: 1px solid rgba(0, 113, 227, 0.4); border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 113, 227, 0.1), inset 0 0 15px rgba(0, 113, 227, 0.1);
+  }
+  html[data-theme="dark"] .aura-core .ring { border-color: rgba(41,151,255, 0.4); box-shadow: 0 0 15px rgba(41,151,255, 0.1), inset 0 0 15px rgba(41,151,255, 0.1); }
+  
+  .aura-core .ring:nth-child(1) { transform: rotateY(0deg); }
+  .aura-core .ring:nth-child(2) { transform: rotateY(60deg); }
+  .aura-core .ring:nth-child(3) { transform: rotateY(120deg); }
+  .aura-core .ring:nth-child(4) { transform: rotateX(90deg); }
+  @keyframes spinCore {
+    0% { transform: rotateX(20deg) rotateY(0deg); }
+    100% { transform: rotateX(20deg) rotateY(360deg); }
+  }
+
+  .process-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; perspective: 1200px; }
+  @media (max-width: 600px) { .process-grid { grid-template-columns: 1fr; } }
+  
+  .step-no { font-size: 0.85rem; font-weight: 700; color: var(--accent); letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem; transition: transform 0.4s ease; }
+  .bento-card:hover .step-no { transform: translateZ(20px); }
 
   /* ============ CTA ============ */
   .cta{ padding:clamp(5rem,12vw,9rem) 0; text-align:left; background:var(--bg-panel); border-radius: 40px 40px 0 0;}
@@ -311,25 +393,79 @@
   footer .socials a:hover{ color:var(--paper); }
 
   .reveal-slow { visibility: hidden; }
+
+  /* ============ КНОПКА "НАВЕРХ" (ЯЗЫЧОК) ============ */
+  .back-to-top {
+    position: fixed;
+    right: clamp(16px, 4vw, 32px);
+    bottom: clamp(16px, 4vw, 32px);
+    z-index: 140;
+    width: 52px; height: 52px;
+    border: none; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+    color: var(--paper);
+    opacity: 0;
+    transform: translateY(24px) scale(0.85);
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  html[data-theme="dark"] .back-to-top {
+    background: rgba(20, 20, 22, 0.6);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+  }
+  .back-to-top.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+  .back-to-top:hover {
+    transform: translateY(-4px) scale(1.06);
+    box-shadow: 0 18px 36px rgba(0, 113, 227, 0.2);
+    border-color: rgba(0, 113, 227, 0.35);
+  }
+  .back-to-top svg {
+    width: 20px; height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .back-to-top:hover svg { transform: translateY(-2px); }
+
+  @media (pointer: coarse) {
+    .back-to-top { width: 48px; height: 48px; }
+  }
 </style>
 </head>
-<body>
+<body id="top">
 
 <div class="preloader" id="preloader">
   <div class="loader-brand" id="loaderBrand">This Is Aura.</div>
   <div class="loader-count" id="loaderCount">000%</div>
 </div>
 
-<!-- All site content is wrapped in #siteContainer for reveal animation -->
+<!-- ГЛОБАЛЬНА СІТКА ВИКОНАНА В ОКРЕМОМУ ШАРІ -->
+<div class="global-grid" id="globalGrid"></div>
+
 <div id="siteContainer" style="opacity: 0; transform: scale(1.05);">
   <div class="glow-circle glow-1"></div>
   <div class="glow-circle glow-2"></div>
 
   <header class="nav">
     <div class="wrap">
-      <a href="#top" class="brand">AURA</a>
+      <a href="#top" class="brand hover-target">AURA</a>
       <nav class="links">
-        <a href="#works" class="hover-target">Проєкти</a>
+        <a href="#process" class="hover-target">Процес</a>
         <a href="#bento" class="hover-target">Переваги</a>
         <div class="controls">
           <a href="/en" class="lang-btn hover-target" aria-label="English">EN</a>
@@ -340,15 +476,39 @@
     </div>
   </header>
 
-  <main id="top">
-    <section class="hero">
-      <div class="wrap">
-        <p class="eyebrow reveal-slow">AURA — креативна студія дизайну</p>
-        <h1 class="reveal-slow">
-          <span class="line"><span>Створюємо сайти,</span></span>
-          <span class="line"><span>що продають.</span></span>
-        </h1>
-        <p class="sub reveal-slow">Сучасний дизайн, плавні анімації та преміальна якість. Ми робимо так, щоб ваш бізнес виглядав дорого.</p>
+  <main>
+    <section class="hero" id="hero">
+      <div class="wrap hero-wrap">
+        <div class="hero-text">
+          <p class="eyebrow reveal-slow">AURA — креативна студія дизайну</p>
+          <h1 class="reveal-slow">
+            <span class="line"><span>Створюємо сайти,</span></span>
+            <span class="line"><span>що продають.</span></span>
+          </h1>
+          <p class="sub reveal-slow">Сучасний дизайн, плавні анімації та преміальна якість. Ми робимо так, щоб ваш бізнес виглядав дорого.</p>
+        </div>
+
+        <div class="hero-widget hover-target" id="heroWidget">
+          <div class="widget-row">
+            <div class="status-badge"><div class="dot"></div> Доступні для проєктів</div>
+          </div>
+          <div class="widget-row">
+            <div class="widget-label">Локація</div>
+            <div class="widget-value">Вінниця, UA</div>
+          </div>
+          <div class="widget-row">
+            <div class="widget-label">Місцевий час</div>
+            <div class="time-value" id="liveTime">00:00:00</div>
+          </div>
+          <div class="widget-row">
+            <div class="widget-label">Поточна дата</div>
+            <div class="widget-value" id="liveDate">Завантаження...</div>
+          </div>
+          <div class="widget-row">
+            <div class="widget-label">Швидкість сайту</div>
+            <div class="widget-value">100/100 балів</div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -413,23 +573,49 @@
       </div>
     </section>
 
-    <section class="works" id="works">
+    <section class="process" id="process">
       <div class="wrap">
-        <div class="head reveal-slow">
-          <h2>Вибрані проєкти</h2><p>Кейси, якими ми пишаємося. Від локальних кав'ярень до великих ресторанів.</p>
-        </div>
-        <div class="work-list">
-          <div class="work reveal-slow">
-            <div class="meta"><span class="no">01</span><h3>Ресторан "Едем"</h3><span class="loc">Сайт-меню, Київ</span></div>
-            <div class="visual hover-visual" data-cursor=""><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop" alt="Ресторан"></div>
-            <div class="specs"><div><b>Платформа</b>Astro + Tailwind</div><div><b>Конверсія</b>+45% замовлень</div></div>
+        
+        <div class="process-info reveal-slow">
+          <h2>Прозорий<br>процес</h2>
+          <p>Від ідеї до готового сайту в Google за пару днів. Жодних складних брифів та затримок.</p>
+          
+          <div class="core-wrapper">
+            <div class="aura-core hover-target">
+              <div class="ring"></div>
+              <div class="ring"></div>
+              <div class="ring"></div>
+              <div class="ring"></div>
+            </div>
           </div>
-          <div class="work reveal-slow">
-            <div class="meta"><span class="no">02</span><h3>Кав'ярня "Зерно"</h3><span class="loc">Лендінг, Вінниця</span></div>
-            <div class="visual hover-visual" data-cursor=""><img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1200&auto=format&fit=crop" alt="Кав'ярня"></div>
-            <div class="specs"><div><b>Платформа</b>Власний код</div><div><b>Особливість</b>QR-меню на столи</div></div>
+        </div>
+        
+        <div class="process-grid">
+          <div class="bento-card hover-target reveal-slow">
+            <span class="step-no">01 / ЗАДАЧА</span>
+            <h3>20 хвилин</h3>
+            <p>Спілкуємось у Telegram. Визначаємо цілі та аудиторію. Без нудних анкет.</p>
+          </div>
+          
+          <div class="bento-card hover-target reveal-slow">
+            <span class="step-no">02 / КОНЦЕПТ</span>
+            <h3>24 години</h3>
+            <p>Інтерактивний прототип головного екрана. Ви бачите дизайн до початку верстки.</p>
+          </div>
+
+          <div class="bento-card hover-target reveal-slow">
+            <span class="step-no">03 / КОД</span>
+            <h3>1-2 дні</h3>
+            <p>Чиста верстка на Astro. Блискавична швидкість (100/100 Google Speed) та плавні анімації.</p>
+          </div>
+
+          <div class="bento-card hover-target reveal-slow">
+            <span class="step-no">04 / ЗАПУСК</span>
+            <h3>Під ключ</h3>
+            <p>Домен, базова SEO-індексація та налаштування форми заявок прямо у ваш Telegram.</p>
           </div>
         </div>
+
       </div>
     </section>
 
@@ -437,7 +623,7 @@
       <div class="wrap">
         <p class="label reveal-slow">Потрібен стильний сайт?</p>
         <div class="reveal-slow"><a href="https://t.me/goblinmane" target="_blank" class="email hover-target">Написати в Telegram</a></div>
-        <div class="details reveal-slow"><div><b>Локація</b>Вінниця (Працюємо онлайн)</div><div><b>Вартість</b>Від $30 за проєкт</div></div>
+        <div class="details reveal-slow"><div><b>Локація</b>Вінниця (Працюємо онлайн)</div><div><b>Вартість</b>Індивідуальний розрахунок</div></div>
       </div>
     </section>
   </main>
@@ -450,8 +636,12 @@
   </footer>
 </div> <!-- /siteContainer -->
 
-<!-- Курсор вынесен за пределы siteContainer и имеет свою видимость -->
 <div class="cursor" id="cursor"><span class="label" id="cursorLabel"></span></div>
+
+<!-- КНОПКА "НАВЕРХ" — язичок, що виїжджає при скролі вниз -->
+<button class="back-to-top hover-target" id="backToTop" aria-label="Прокрутити наверх">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+</button>
 
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -461,9 +651,9 @@
 (function(){
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* 1. КУРСОР */
+  /* 1. КУРСОР ТА ГЛОБАЛЬНА ІНТЕРАКТИВНА СІТКА НА ВСІХ ЕКРАНАХ */
   const cursor = document.getElementById('cursor');
-  const cursorLabel = document.getElementById('cursorLabel');
+  const globalGrid = document.getElementById('globalGrid');
   
   let mouse = { x: -100, y: -100 }; 
   let pos = { x: -100, y: -100 };
@@ -471,6 +661,12 @@
   window.addEventListener('mousemove', e => {
     mouse.x = e.clientX; 
     mouse.y = e.clientY;
+
+    if (globalGrid) {
+      const maskStr = `radial-gradient(circle 400px at ${e.clientX}px ${e.clientY}px, black 0%, transparent 100%)`;
+      globalGrid.style.webkitMaskImage = maskStr;
+      globalGrid.style.maskImage = maskStr;
+    }
   });
 
   (function loop(){
@@ -480,48 +676,73 @@
     requestAnimationFrame(loop);
   })();
 
-  // Наведение на обычные ссылки (меню, язык, тема, карточки) -> просто размытие (стекло)
   document.querySelectorAll('.hover-target').forEach(el => {
     el.addEventListener('mouseenter', () => { cursor.classList.add('grow'); });
     el.addEventListener('mouseleave', () => { cursor.classList.remove('grow'); });
   });
 
-  // Наведение на ИЗОБРАЖЕНИЯ (Visual) -> огромный круг с текстом
-  document.querySelectorAll('.hover-visual').forEach(el => {
-    el.addEventListener('mouseenter', () => { 
-      cursor.classList.add('grow-visual'); 
-      cursorLabel.textContent = el.dataset.cursor || ''; 
-    });
-    el.addEventListener('mouseleave', () => { 
-      cursor.classList.remove('grow-visual'); 
-      cursorLabel.textContent = ''; 
-    });
-  });
+  /* 2. LIVE ВІДЖЕТ ЧАСУ ТА ДАТИ */
+  function updateLiveClock() {
+    const now = new Date();
+    const timeEl = document.getElementById('liveTime');
+    const dateEl = document.getElementById('liveDate');
+    
+    if(timeEl) {
+      timeEl.textContent = now.toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+    if(dateEl) {
+      dateEl.textContent = now.toLocaleDateString('uk-UA', { timeZone: 'Europe/Kyiv', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+  }
+  setInterval(updateLiveClock, 1000);
+  updateLiveClock();
 
-  /* 2. БАЗОВЫЙ UI (Тема и год) */
+  /* 3. БАЗОВИЙ UI ТА ІНК-АНІМАЦІЯ ТЕМИ */
   document.getElementById('year').textContent = new Date().getFullYear();
   const themeToggle = document.getElementById('themeToggle');
   const html = document.documentElement;
-  const updateToggleIcon = () => { themeToggle.textContent = html.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; };
+  
+  const updateToggleIcon = () => { 
+    themeToggle.textContent = html.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; 
+  };
   updateToggleIcon();
-  themeToggle.addEventListener('click', () => {
-    const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateToggleIcon();
+
+  themeToggle.addEventListener('click', async () => {
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    const newTheme = isDark ? 'light' : 'dark';
+
+    if (document.startViewTransition) {
+      html.classList.add('theme-transitioning');
+      const transition = document.startViewTransition(() => {
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateToggleIcon();
+      });
+      await transition.finished;
+      html.classList.remove('theme-transitioning');
+    } else {
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateToggleIcon();
+    }
   });
 
-  /* 3. ОПРЕДЕЛЕНИЕ ФУНКЦИЙ АНИМАЦИИ */
+  /* 4. АНІМАЦІЇ (GSAP) */
   const countEl = document.getElementById('loaderCount');
   const brandEl = document.getElementById('loaderBrand');
   const preloader = document.getElementById('preloader');
   const siteContainer = document.getElementById('siteContainer');
 
   function runHeroEntrance() {
-    if(reduceMotion || typeof gsap === 'undefined') return;
+    if(reduceMotion || typeof gsap === 'undefined') {
+      document.getElementById('heroWidget').style.opacity = 1;
+      document.getElementById('heroWidget').style.transform = 'none';
+      return;
+    }
     const tl = gsap.timeline({ defaults:{ ease:'power3.out' } });
     tl.to('.hero h1 .line span', { y:'0%', duration: 1.2, stagger: 0.1 }, "+=0.2")
-      .to('.hero .sub', { opacity: 1, y: 0, duration: 1 }, '-=0.8');
+      .to('.hero .sub', { opacity: 1, y: 0, duration: 1 }, '-=0.8')
+      .to('#heroWidget', { opacity: 1, y: 0, scale: 1, duration: 1 }, '-=0.8');
   }
 
   function triggerZoomReveal() {
@@ -560,7 +781,7 @@
     tl.to(preloader, { opacity: 0, duration: 0.4 }, "-=0.4");
   }
 
-  /* 4. ЗАПУСК ТЯЖЕЛОЙ ЛОГИКИ (GSAP / LENIS) С ФОЛБЭКОМ */
+  /* 5. ЗАПУСК GSAP ТА LENIS (ПЛАВНИЙ СКРОЛ) */
   try {
     if (typeof gsap === 'undefined') throw new Error('GSAP is not loaded');
     gsap.registerPlugin(ScrollTrigger);
@@ -578,9 +799,9 @@
       onComplete: triggerZoomReveal
     });
 
-    /* SCROLL REVEAL */
     if(!reduceMotion){
       gsap.utils.toArray('.reveal-slow').forEach(function(elem) {
+        if(elem.id === 'heroWidget') return;
         gsap.set(elem, { autoAlpha: 0, y: 30 });
         gsap.to(elem, {
           scrollTrigger: { trigger: elem, start: "top 85%", once: true },
@@ -589,22 +810,30 @@
       });
     }
 
-    /* IMAGE PARALLAX */
-    if(!reduceMotion){
-      gsap.utils.toArray('.visual img').forEach(img => {
-        gsap.to(img, { yPercent: 20, ease: "none", scrollTrigger: { trigger: img.parentElement, start: "top bottom", end: "bottom top", scrub: true }});
-      });
-    }
-
-    /* SMOOTH SCROLL */
     if (typeof Lenis !== 'undefined' && !reduceMotion) {
-      const lenis = new Lenis({ duration: 1.2, smoothWheel: true });
-      function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+      window.lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+      function raf(time){ window.lenis.raf(time); requestAnimationFrame(raf); }
       requestAnimationFrame(raf);
       ScrollTrigger.update();
-      gsap.ticker.add((time)=> lenis.raf(time*1000));
+      gsap.ticker.add((time)=> window.lenis.raf(time*1000));
       gsap.ticker.lagSmoothing(0);
     }
+
+    /* ПЛАВНИЙ СКРОЛ ДЛЯ КНОПОК ТА МЕНЮ */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetID = this.getAttribute('href');
+        const targetElement = document.querySelector(targetID);
+        if (targetElement) {
+          if (window.lenis) {
+            window.lenis.scrollTo(targetElement, { offset: 0 });
+          } else {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      });
+    });
 
   } catch (e) {
     console.error('Effects failed, falling back:', e);
@@ -614,6 +843,34 @@
     siteContainer.style.transform = 'none';
     document.body.style.overflow = '';
   }
+
+  /* 6. КНОПКА "НАВЕРХ" — з'являється при скролі вниз */
+  const backToTop = document.getElementById('backToTop');
+  const heroEl = document.getElementById('hero');
+  const SHOW_AFTER = 400; // px прокрутки, після яких з'являється кнопка
+
+  function toggleBackToTop() {
+    const scrolled = window.scrollY || document.documentElement.scrollTop;
+    const threshold = heroEl ? heroEl.offsetHeight * 0.6 : SHOW_AFTER;
+    if (scrolled > threshold) {
+      backToTop.classList.add('visible');
+    } else {
+      backToTop.classList.remove('visible');
+    }
+  }
+
+  window.addEventListener('scroll', toggleBackToTop, { passive: true });
+  toggleBackToTop();
+
+  backToTop.addEventListener('click', () => {
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { duration: 1.2 });
+    } else if (!reduceMotion) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  });
 
 })();
 </script>
